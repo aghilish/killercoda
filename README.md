@@ -1,5 +1,13 @@
-# k8s-scenarios
+# Knowledge Graph Platform Deep Dive
 
-## first scenario
+## session 1: intro to docker and kubernetes architecture  
 
-### get all the pods
+## session 2: kubernetes pods and deployments
+
+## session 3: kubernetes services and networking
+
+## session 4: helm charts and release process
+
+## session 5: terraform
+
+## session 6: bash scripts

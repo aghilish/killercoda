@@ -1,6 +1,4 @@
+## WELL DONE 👨🏽‍🎓 !
+## Now go get yourself a cup of coffee ☕
 
-<br>
-
-### WELL DONE !
-
-You solved this challenge!
+You just finished the session 1 of Knowledge Graph platform deep dive! 
