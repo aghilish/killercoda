@@ -6,8 +6,10 @@
 
 ## session 3: kubernetes services and networking
 
-## session 4: helm charts and release process
+## session 4: service mesh
 
-## session 5: terraform
+## session 5: helm charts and release process
 
-## session 6: bash scripts
+## session 6: terraform
+
+## session 7: bash scripts
