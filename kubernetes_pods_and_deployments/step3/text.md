@@ -17,7 +17,7 @@
         apiVersion: v1
         kind: Pod
         metadata:
-            name: jack-the-webserver
+            name: test2
         spec:
             containers:
             - name: nginx
