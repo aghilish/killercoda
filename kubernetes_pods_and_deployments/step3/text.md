@@ -21,8 +21,10 @@
         spec:
             containers:
             - name: nginx
-                image: nginx        
-        #kubectl run test --image=nginx
+              image: nginx
+        </code>
+        <code>
+        kubectl create -f jack.yaml
         </code>
     </pre>
 </details>

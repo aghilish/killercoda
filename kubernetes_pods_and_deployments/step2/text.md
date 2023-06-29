@@ -24,7 +24,7 @@
 <details>
   <summary>Solution</summary>
     <pre><code> 
-    k api-versions 
+    kubectl api-versions 
     </code></pre>
 </details>
 
