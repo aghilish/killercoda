@@ -1,6 +1,6 @@
 {
-  "title": "Kubernetes 2node",
-  "description": "Uses a two node Kubernetes cluster",
+  "title": "KG Platform deep dive",
+  "description": "Kubernetes Architecture and Overview",
   "details": {
     "intro": {
       "text": "intro.md"
