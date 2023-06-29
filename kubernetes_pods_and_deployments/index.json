@@ -1,0 +1,32 @@
+{
+  "title": "Kubernetes 2node",
+  "description": "Uses a two node Kubernetes cluster",
+  "details": {
+    "intro": {
+      "text": "intro.md"
+    },
+    "steps": [
+      {
+        "title": "Create 2 sleepy containers",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh"
+      },
+      {
+        "title": "Inpsect pids",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh"
+      },
+      {
+        "title": "k8s components",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-2nodes"
+  }
+}
