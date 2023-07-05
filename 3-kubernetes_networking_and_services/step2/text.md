@@ -9,10 +9,12 @@
         kubectl get nodes -owide
         ip addr 
     </code></pre>
-    <pre><code>    
+    don't forget to create a new pod in the default namespace first
+    <pre><code>
+        kubectl run nginx --image=nginx
         kubectl get pods -owide
     </code></pre>
     <pre><code>    
-        kubectl get nodes -owide
+        kubectl get svc -owide
     </code></pre>
 </details>
