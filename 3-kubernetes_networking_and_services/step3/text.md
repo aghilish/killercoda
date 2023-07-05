@@ -1,30 +1,27 @@
 
-* create a simple nginx pod called `test` using commandline (imperative)
+* create a simple nodeport service using the declartive approach
 
 <details>
   <summary>Solution</summary>
     <pre><code>    
-        kubectl run test --image=nginx
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: jack-the-server
+        spec:
+          type: NodePort
+          ports:
+            - targetPort: 80
+              port: 80
+              nodePort: 30080
     </code></pre>
 </details>
 
-* create a simple nginx pod called `test2` in a declarative
+* let's list the services
 
 <details>
   <summary>Solution</summary>
-    <pre>
-        <code>
-        apiVersion: v1
-        kind: Pod
-        metadata:
-            name: test2
-        spec:
-            containers:
-            - name: nginx
-              image: nginx
-        </code>
-        <code>
-        kubectl create -f jack.yaml
-        </code>
-    </pre>
+    <pre><code>    
+       kubectl get svc -owide
+    </code></pre>
 </details>
