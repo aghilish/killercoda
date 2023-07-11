@@ -33,8 +33,8 @@
       },
       {
         "title": "Load Balancer",
-        "text": "step5/text.md",
-        "verify": "step5/verify.sh"
+        "text": "step6/text.md",
+        "verify": "step6/verify.sh"
       },
       {
         "title": "Core / KubeDNS",

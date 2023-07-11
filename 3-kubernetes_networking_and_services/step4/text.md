@@ -1,19 +1,27 @@
+* let's create a deployment from the `nginx` image
 
-* describe the `test` pod
 <details>
   <summary>Solution</summary>
     <pre><code>    
-        kubectl describe pod test
+        kubectl create deploy evsa --image=nginx
     </code></pre>
 </details>
 
-* inspect the logs of the `test` pod
+* create a simple nodeport service using the imperative approach
 
 <details>
   <summary>Solution</summary>
-    <pre>
-        <code>
-        kubectl logs -f test
-        </code>
-    </pre>
+    <pre><code>    
+        kubectl expose deployment evsa --type=NodePort --port=80
+    </code></pre>
+</details>
+
+
+* ok now let's try accessing the container via a node
+
+<details>
+  <summary>Solution</summary>
+    <pre><code>    
+       curl http://$NODE01_IP:$NODEPORT
+    </code></pre>
 </details>
