@@ -17,7 +17,13 @@
 
 ### session 4: helm charts and release process
 
+- discussed kg helm charts without killercoda 
+
 ### session 5: service mesh
+- intro to service mesh
+- installing istio
+- istio features
+- installing anthos service mesh with asmcli
 
 ### session 6: terraform
 
