@@ -1,0 +1,56 @@
+{
+  "title": "Argo CD intro",
+  "description": "Argo CD hands on lab",
+  "details": {
+    "intro": {
+      "text": "intro.md"
+    },
+    "steps": [
+      {
+        "title": "Installing Argo CD",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh"
+      },
+      {
+        "title": "Logging into the UI",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh"
+      },
+      {
+        "title": "Creating the first Argo Application",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh"
+      },
+      {
+        "title": "Syncing the Application",
+        "text": "step4/text.md",
+        "verify": "step4/verify.sh"
+      },
+      {
+        "title": "Self Healing and Self Pruning",
+        "text": "step5/text.md",
+        "verify": "step5/verify.sh"
+      }
+    ],
+    "assets": {
+      "host01": [
+        {
+          "file": "install.yaml",
+          "target": "/tmp/install.yaml",
+          "chmod": "+w"
+        },
+        {
+          "file": "application.yaml",
+          "target": "~/application.yaml",
+          "chmod": "+w"
+        }
+      ]
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-2nodes"
+  }
+}
