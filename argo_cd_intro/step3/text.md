@@ -1,4 +1,4 @@
-> Create an Argo CD application declaratively using Yaml with below specs and apply it using kubectl: You can use the definition file `/home/application.yaml`
+> Create an Argo CD application declaratively using Yaml with below specs and apply it using kubectl: You can use the definition file `/home/application.yaml` as a starting point.
 
 - Name: `guestbook`
 - Destination cluster url (local cluster): `https://kubernetes.default.svc`
@@ -8,9 +8,7 @@
 - Source branch: `master`
 - Create the application using kubectl
 
-```jsx
-kubectl apply -f /home/application.yaml
-```
+`kubectl apply -f /home/application.yaml` {{exec}}
 
 <details>
   <summary>Solution</summary>

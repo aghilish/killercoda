@@ -3,9 +3,7 @@
 Now let's showcase the self healing.
 Let's delete the deployment and at the same time have a look on the UI
 
-```jsx
-kubectl -n guestbook delete deploy guestbook-ui
-```
+`kubectl -n guestbook delete deploy guestbook-ui`{{exec}}
 
 What happens ?
 It magically healed itself. Pretty amazing, huh ?
