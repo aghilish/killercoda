@@ -36,12 +36,12 @@
       "host01": [
         {
           "file": "install.yaml",
-          "target": "/home/install.yaml",
+          "target": "/home",
           "chmod": "+w"
         },
         {
           "file": "application.yaml",
-          "target": "/home/application.yaml",
+          "target": "/home",
           "chmod": "+w"
         }
       ]
