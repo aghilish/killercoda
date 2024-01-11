@@ -9,7 +9,7 @@
 - Create the application using kubectl
 
 ```jsx
-kubectl apply -f /practice/application.yaml
+kubectl apply -f /home/application.yaml
 ```
 
 <details>
