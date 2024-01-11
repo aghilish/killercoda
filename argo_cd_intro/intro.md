@@ -7,5 +7,5 @@ In this training we will go through
 
 - Installing Argo CD
 - Logging into Argo CD UI
-- Create the First Argo CD Application
+- Creating the First Argo CD Application
 - Autoheal and Autoprune Demo
