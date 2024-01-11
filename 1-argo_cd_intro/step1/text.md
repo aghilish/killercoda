@@ -8,7 +8,7 @@
     <pre>
       <code>
 kubectl create namespace argocd
-kubectl apply -n argocd -f /tmp/install.yaml
+kubectl apply -n argocd -f /home/install.yaml
     </code>
       </pre>
     </p>
