@@ -33,18 +33,7 @@
       }
     ],
     "assets": {
-      "host01": [
-        {
-          "file": "install.yaml",
-          "target": "/tmp/install.yaml",
-          "chmod": "+w"
-        },
-        {
-          "file": "application.yaml",
-          "target": "~/application.yaml",
-          "chmod": "+w"
-        }
-      ]
+      "host01": []
     },
     "finish": {
       "text": "finish.md"
