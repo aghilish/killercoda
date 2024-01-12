@@ -8,7 +8,7 @@
 - Source branch: `master`
 - Create the application using kubectl
 
-`kubectl apply -f /home/application.yaml` {{exec}}
+`kubectl apply -f /home/application.yaml`{{exec}}
 
 <details>
   <summary>Solution</summary>
