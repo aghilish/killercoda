@@ -3,7 +3,7 @@
 - Name: `guestbook`
 - Destination cluster url (local cluster): `https://kubernetes.default.svc`
 - Destination namespace: `guestbook`
-- Source repo: `https://github.com/shahrooz33ce/argocd-example-apps.git`, or you can fork the repo and set your repo url.
+- Source repo: `https://github.com/aghilish/argocd-example-apps.git`, or you can fork the repo and set your repo url.
 - Source path: `guestbook` , (path of manifests where it include k8s service and deployment files).
 - Source branch: `master`
 - Create the application using kubectl
