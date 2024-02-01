@@ -27,7 +27,7 @@ spec:
   project: default
   source:
     path: guestbook
-    repoURL: "https://github.com/shahrooz33ce/argocd-example-apps.git"
+    repoURL: "https://github.com/aghilish/argocd-example-apps.git"
     targetRevision: master
   syncPolicy:
     syncOptions:
