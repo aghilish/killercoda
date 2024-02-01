@@ -10,4 +10,4 @@ It magically healed itself. Pretty amazing, huh ?
 
 And for the self pruning we can try renaming the guestbook-ui deployment to something else and push our change to git remote.
 
-Once again Argo CD detects the drift from the desired state and prunes the undesired deployment!
+Once again Argo CD detects the drift and realizes that the old deployment is not part of the desired state anymore... therefore prunes it, just right!
