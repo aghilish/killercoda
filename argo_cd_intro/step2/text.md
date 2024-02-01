@@ -1,4 +1,5 @@
 > You need admin password in order to login to Argo CD Web UI.
+
 > Username: admin
 
 Initial admin password is stored as a secret in argocd namespace:
