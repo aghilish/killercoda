@@ -24,7 +24,7 @@ cd operator-tutorial
 ```{{exec}}
 
 ```shell
-kubebuilder init --repo example.com
+kubebuilder init --repo example.com --domain example.com
 ```{{exec}}
 
 let us have a closer look at the make file first.
