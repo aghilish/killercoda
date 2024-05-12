@@ -35,7 +35,7 @@ make help
 to run your kubebuilder application locally
 ```shell
 make run
-```
+```{{exec}}
 
 now let's have a look at the `run` target and all the prerequisite comamnds that need to run
 it looks something like this
