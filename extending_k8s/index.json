@@ -7,7 +7,7 @@
     },
     "steps": [
       {
-        "title": "Installing Argo CD",
+        "title": "Custom Resource Definition (CRD) API",
         "text": "step1/text.md",
         "verify": "step1/verify.sh"
       },
