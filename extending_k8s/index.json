@@ -12,7 +12,7 @@
         "verify": "step1/verify.sh"
       },
       {
-        "title": "Logging into the UI",
+        "title": "Install Kubebuilder and Create a New Project",
         "text": "step2/text.md",
         "verify": "step2/verify.sh"
       },
