@@ -17,12 +17,12 @@
         "verify": "step2/verify.sh"
       },
       {
-        "title": "Create our first API",
+        "title": "Create Our First API",
         "text": "step3/text.md",
         "verify": "step3/verify.sh"
       },
       {
-        "title": "Syncing the Application",
+        "title": "A Look into Kubebuilder Setup",
         "text": "step4/text.md",
         "verify": "step4/verify.sh"
       },
