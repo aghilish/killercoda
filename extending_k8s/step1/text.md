@@ -1,7 +1,7 @@
 let's start by using the `custom resource definition` api of kubernetes. 
 let's create a custom resource called `CronTab`
 
-```shell
+```
 kubectl apply -f - << EOF
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -57,7 +57,8 @@ spec:
     shortNames:
     - ct
 EOF
-```
+```{{exec}}
+
 now our CronTab resource type is created. 
 `kubectl get crd`{{exec}}
 
@@ -85,7 +86,7 @@ spec:
   cronSpec: "* * * * */5"
   image: my-awesome-cron-image
 EOF
-```
+```{{exec}}
 
 `kubectl get crontab`{{exec}}
 
