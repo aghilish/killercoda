@@ -30,6 +30,16 @@
         "title": "Add Some Logging to the Reconcile Function",
         "text": "step5/text.md",
         "verify": "step5/verify.sh"
+      },
+      {
+        "title": "Add Some Logging to the Reconcile Function",
+        "text": "step5/text.md",
+        "verify": "step5/verify.sh"
+      },
+      {
+        "title": "Implement the Desired State of the Ghost Operator",
+        "text": "step6/text.md",
+        "verify": "step6/verify.sh"
       }
     ],
     "assets": {
