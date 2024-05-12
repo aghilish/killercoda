@@ -18,9 +18,11 @@ And scaffold a kubebuilder application.
 ```shell
 mkdir operator-tutorial
 ```{{exec}}
+
 ```shell
 cd operator-tutorial
 ```{{exec}}
+
 ```shell
 kubebuilder init --repo example.com
 ```{{exec}}
@@ -33,11 +35,12 @@ make help
 ```{{exec}}
 
 to run your kubebuilder application locally
+
 ```shell
 make run
 ```{{exec}}
 
-now let's have a look at the `run` target and all the prerequisite comamnds that need to run
+now let us have a look at the `run` target and all the prerequisite comamnds that need to run
 it looks something like this
 ```shell
 .PHONY: run

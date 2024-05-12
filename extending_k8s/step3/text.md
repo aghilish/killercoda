@@ -52,7 +52,7 @@ and us notice the difference by looking at our kubernetes crds
 kubectl get crds
 ```{{exec}}
 
-now let's install the crd we generated onto the cluster
+now let us install the crd we generated onto the cluster
 ```shell
 make install
 ```{{exec}}
