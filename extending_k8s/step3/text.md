@@ -1,5 +1,5 @@
 Now we have a working yet empty go application. 
-let's add some meaningful code to it 
+let's add some meaningful code to it.
 
 Let's imagine we are a working at company where our colleagues are heavy users of the `ghost` blogging application.
 Our job is to provide them with ghost instances whenever and whereever they want it. We are infra gurus and through years of
@@ -23,10 +23,10 @@ kubebuilder create api \
   --controller true
 ```{{exec}}
 
-At this stage, Kubebuilder has wired up two key components for your operator:
+At this stage, Kubebuilder has wired up two key components for your operator.
 
-A Resource in the form of a Custom Resource Definition (CRD) with the kind `Ghost`.
-A Controller that runs each time a `Ghost` CRD is create, changed, or deleted.
+- A Resource in the form of a Custom Resource Definition (CRD) with the kind `Ghost`.
+- A Controller that runs each time a `Ghost` CRD is create, changed, or deleted.
 
 The command we ran added a Golang representation of the `Ghost` Custom Resource Definition (CRD) to our operator scaffolding code.
 To view this code, navigate to your Code editor tab under `api` > `v1` > `ghost_types.go`.
