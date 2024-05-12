@@ -34,16 +34,16 @@ spec:
       
       additionalPrinterColumns:
         - name: Spec
-        type: string
-        description: The cron spec defining the interval a CronJob is run
-        jsonPath: .spec.cronSpec
+          type: string
+          description: The cron spec defining the interval a CronJob is run
+          jsonPath: .spec.cronSpec
         - name: Replicas
-        type: integer
-        description: The number of jobs launched by the CronJob
-        jsonPath: .spec.replicas
+          type: integer
+          description: The number of jobs launched by the CronJob
+          jsonPath: .spec.replicas
         - name: Age
-        type: date
-        jsonPath: .metadata.creationTimestamp
+          type: date
+          jsonPath: .metadata.creationTimestamp
   # either Namespaced or Cluster
   scope: Namespaced
   names:
