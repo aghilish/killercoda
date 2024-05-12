@@ -10,5 +10,5 @@ In this training we will
 - Create Our First API
 - A Look into Kubebuilder Setup
 - Add Some Logging to the Reconcile Function
-- Implement the Desired State of the Ghost Operato
+- Implement the Desired State of the Ghost Operator
 - Access the Custom Resource Inside the Reconcile Function
