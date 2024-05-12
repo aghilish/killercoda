@@ -7,7 +7,7 @@
     },
     "steps": [
       {
-        "title": "Custom Resource Definition (CRD) API",
+        "title": "A Look into Custom Resource Definition (CRD) API",
         "text": "step1/text.md",
         "verify": "step1/verify.sh"
       },
@@ -43,18 +43,7 @@
       }
     ],
     "assets": {
-      "host01": [
-        {
-          "file": "install.yaml",
-          "target": "/home",
-          "chmod": "+w"
-        },
-        {
-          "file": "application.yaml",
-          "target": "/home",
-          "chmod": "+w"
-        }
-      ]
+      "host01": []
     },
     "finish": {
       "text": "finish.md"
