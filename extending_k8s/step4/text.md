@@ -16,8 +16,7 @@ if err = (&controllers.WebsiteReconciler{
 }
 ```
 
-This is a call to the function `SetupWithManager(mgr)` defined in the file `internal/controller/ghost_controller.go` .
-
+This is a call to the function `SetupWithManager(mgr)`.
 Navigate to `internal/controller/ghost_controller.go:58` to view this function. 
 It is already configured to know about the CRD `api/v1/ghost_types.go` or the generated yaml represenation at `crd/bases/blog.example.com_ghosts`.
 

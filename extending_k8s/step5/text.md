@@ -1,13 +1,48 @@
-> Now let's enable auto sync on the UI. Please also make sure you enable `PRUNE RESOURCES` and `SELF HEAL` options.
+let us add some logs to the reconcile function and run the operator application and change the state of the cluster.
+let us paste this code into the `Reconcile` function. 
 
-Now let's showcase the self healing.
-Let's delete the deployment and at the same time have a look on the UI
+```go
+log := log.FromContext(ctx)
+log.Info("Reconciling Ghost")
+log.Info("Reconciliation complete")
+return ctrl.Result{}, nil
+```
 
-`kubectl -n guestbook delete deploy guestbook-ui`{{exec}}
+and run the application
 
-What happens ?
-It magically healed itself. Pretty amazing, huh ?
+```shell
+make run
+```{{exec}}
 
-And for the self pruning we can try renaming the guestbook-ui deployment to something else and push our change to git remote.
+next we need to modify the generated custom resource yaml file
+navigate to `config/samples/blog_v1_ghost.yaml`
+and add a `foo: bar` under spec. The custom resource should look like 
 
-Once again Argo CD detects the drift and realizes that the old deployment is not part of the desired state anymore... therefore prunes it, just right!
+```yaml
+apiVersion: blog.example.com/v1
+kind: Ghost
+metadata:
+  name: ghost-sample
+spec:
+  foo: bar
+```
+
+don't forget to save the file. Now in other terminal window, let's apply it on the cluster.
+```shell
+kubectl apply -f config/samples/blog_v1_ghost.yaml
+```{{exec}}
+
+Tada! checkout the logs showing up!
+
+```shell
+INFO    Reconciling Ghost
+INFO    Reconciliation complete
+```
+
+now let us try deleting the resource. 
+
+```shell
+kubectl delete -f config/samples/blog_v1_ghost.yaml
+```{{exec}}
+
+Same logs showed up again. So basically _anytime_ you interact with your `Ghost` resource a new event is triggered and your controller will print the logs.

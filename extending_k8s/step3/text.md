@@ -45,8 +45,8 @@ you will find the generated crd at `config/crd/bases/blog.example.com_ghosts.yam
 see how kubebuilder did all the heavylifting we had to previously do for the crontab example! lovely!
 
 
-Now let us install the CRD into our cluster.
-and us notice the difference by looking at our kubernetes crds
+Now let us install the CRD into our cluster
+and notice the difference by looking at our kubernetes crds.
 
 ```shell
 kubectl get crds

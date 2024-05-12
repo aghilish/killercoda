@@ -27,7 +27,7 @@
         "verify": "step4/verify.sh"
       },
       {
-        "title": "Self Healing and Self Pruning",
+        "title": "Add Some Logging to the Reconcile Function",
         "text": "step5/text.md",
         "verify": "step5/verify.sh"
       }
