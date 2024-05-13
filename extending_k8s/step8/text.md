@@ -117,11 +117,11 @@ func generateDesiredPVC(ghost *blogv1.Ghost, pvcName string) *corev1.PersistentV
 Let's make sure we have the following import statements in the import section of our controller `internal/controller/ghost_controller.go`.
 
 ```go
-  corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/api/resource"
-	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
-	"k8s.io/client-go/tools/record"
+corev1 "k8s.io/api/core/v1"
+metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+"k8s.io/apimachinery/pkg/api/resource"
+"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
+"k8s.io/client-go/tools/record"
 ```
 
 Also let's replace our `GhostReconciler` struct with the following snippet
