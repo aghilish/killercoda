@@ -26,7 +26,7 @@ kubebuilder create api \
 At this stage, Kubebuilder has wired up two key components for your operator.
 
 - A Resource in the form of a Custom Resource Definition (CRD) with the kind `Ghost`.
-- A Controller that runs each time a `Ghost` CRD is create, changed, or deleted.
+- A Controller that runs each time a `Ghost` CRD is created, changed, or deleted.
 
 The command we ran added a Golang representation of the `Ghost` Custom Resource Definition (CRD) to our operator scaffolding code.
 To view this code, navigate to your Code editor tab under `api` > `v1` > `ghost_types.go`.

@@ -142,5 +142,8 @@ const deploymentNamePrefix = "ghost-deployment-"
 const svcNamePrefix = "ghost-service-"
 ```
 right after our `GhostReconciler` struct. (around line 40).
-
+And add this line as the first line of the `SetupWithManager` function.
+```go
+r.recoder = mgr.GetEventRecorderFor("ghost-controller")
+```
 The `addPvcIfNotExists` function, checks whether the `pvc` is already created and if not, it will create it in the right namespace.
