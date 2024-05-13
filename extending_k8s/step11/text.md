@@ -107,7 +107,12 @@ kubectl create namespace marketing
 kubectl apply -f config/samples/blog_v1_ghost.yaml
 ```{{exec}}
 
-We start to see our reconciliation logs showing up and our subresources being created. We can inspect them by running `kubectl get pvc,pod,deploy -n marketing`.
+We start to see our reconciliation logs showing up and our subresources being created. We can inspect them by running 
+
+```shell
+kubectl get pvc,deploy,svc -n marketing
+```{{exec}}
+
 We can perform a portforward on the service to see our ghost application in a browser.
 
 [Ghost Application]({{TRAFFIC_HOST1_30001}})
