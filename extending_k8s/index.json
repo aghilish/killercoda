@@ -65,6 +65,11 @@
         "title": "Update the Ghost Resource",
         "text": "step12/text.md",
         "verify": "step12/verify.sh"
+      },
+      {
+        "title": "Delete the Ghost Resource",
+        "text": "step13/text.md",
+        "verify": "step13/verify.sh"
       }
     ],
     "assets": {
