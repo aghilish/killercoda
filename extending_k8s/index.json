@@ -55,6 +55,11 @@
         "title": "implementing the Ghost Operator Logic, Part 3 - Service",
         "text": "step10/text.md",
         "verify": "step10/verify.sh"
+      },
+      {
+        "title": "implementing the Final Logic of the Reconcile Function",
+        "text": "step11/text.md",
+        "verify": "step11/verify.sh"
       }
     ],
     "assets": {

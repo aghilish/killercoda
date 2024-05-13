@@ -46,7 +46,7 @@ make run
 so far our reconcile function is not run yet but if we apply our custom resource in another terminal window:
 
 ```shell
-kubectl apply -f config/crd/samples/blog_v1_ghost.yaml
+kubectl apply -f config/samples/blog_v1_ghost.yaml
 ```{{exec}}
 
 we start to see the logs of our reconcile function
