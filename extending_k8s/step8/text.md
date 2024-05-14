@@ -147,3 +147,9 @@ And add this line as the first line of the `SetupWithManager` function.
 r.recoder = mgr.GetEventRecorderFor("ghost-controller")
 ```
 The `addPvcIfNotExists` function, checks whether the `pvc` is already created and if not, it will create it in the right namespace.
+
+let's rebuild the application to make sure there are no syntax errors.
+
+```shell
+make 
+```{{exec}}

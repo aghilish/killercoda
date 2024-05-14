@@ -1,7 +1,7 @@
 Now we have a working yet empty go application. 
-let's add some meaningful code to it.
+Let's add some meaningful code to it.
 
-Let's imagine we are a working at company where our colleagues are heavy users of the `ghost` blogging application.
+Let's imagine we are working at company where our colleagues are heavy users of the `ghost` blogging application.
 Our job is to provide them with ghost instances whenever and whereever they want it. We are infra gurus and through years of
 experience have learned that building an automation for such a task can save us a lot of toil and manual labor.
 
