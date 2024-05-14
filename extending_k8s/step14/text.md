@@ -1,34 +1,12 @@
-## Deploying the Operator to Kubernetes
+If perform a delete operation on our resource, all the subresouces will be deleted too, as we set their owner to be the ghost resource.
+Please notice the `controllerutil.SetControllerReference` usage, before creating the subresources.
 
-Your operator is an application, so it needs to be packaged as a OCI compliant container image just like any other container you want to deploy.
-
-We need to run the right make command to build our OCI image and then Deploy it.
-
-Build
+Let us perform the delete and see the effect.
 ```shell
-# please use your own tag here! :D 
-export IMG=c8n.io/aghilish/ghost-operator:latest
-make docker-build
+kubectl delete ghosts.blog.example.com -n marketing ghost-sample
 ```{{exec}}
-
-Push
-```shell
-make docker-push
-```{{exec}}
-
-Deploy
-```shell
-make deploy
-```{{exec}}
-
-Undeploy
+We can see all the subresources are deleted.
 
 ```shell
-make deploy
-```{{exec}}
-
-And we can look around and inspect the logs of our manager when we CRUD operations with our ghost API.
-
-```shell
-kubectl get all -n ghost-operator-system
+kubectl get all -n marketing
 ```{{exec}}

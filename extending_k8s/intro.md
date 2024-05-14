@@ -13,9 +13,10 @@ In this training we will
 - Implement the Desired State of the Ghost Operator
 - Access the Custom Resource Inside the Reconcile Function
 - Implement the Ghost Operator Logic, Part 1 - PVC
-- Implement the Ghost Operator Logic, Part 2 - Deployment
-- Implement the Ghost Operator Logic, Part 3 - Service
+- Implement the Ghost Operator Logic, Part 2 - RBAC 
+- Implement the Ghost Operator Logic, Part 3 - Deployment
+- Implement the Ghost Operator Logic, Part 4 - Service
 - Implement the Final Logic of the Reconcile Function
 - Update the Ghost Resource
 - Delete the Ghost Resource
-- Deploy the Ghost Operator to the Cluster
+- Deploy Ghost Operator to the Cluster
