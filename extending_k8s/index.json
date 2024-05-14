@@ -70,6 +70,11 @@
         "title": "Delete the Ghost Resource",
         "text": "step13/text.md",
         "verify": "step13/verify.sh"
+      },
+      {
+        "title": "Deploy the Ghost Operator to the Cluster",
+        "text": "step14/text.md",
+        "verify": "step14/verify.sh"
       }
     ],
     "assets": {

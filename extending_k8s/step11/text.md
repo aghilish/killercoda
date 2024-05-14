@@ -126,6 +126,12 @@ We start to see our reconciliation logs showing up and our subresources being cr
 kubectl get pvc,deploy,svc -n marketing
 ```{{exec}}
 
+Let us have a look at our ghost resource as well.
+```shell
+kubectl describe -n marketing ghosts.blog.example.com ghost-sample
+```{{exec}}
+
+
 We can perform a portforward on the service to see our ghost application in a browser.
 
 [Ghost Application]({{TRAFFIC_HOST1_30001}})
