@@ -52,4 +52,4 @@ run: manifests generate fmt vet ## Run a controller from your host.
 > 1. `manifests` and `generate` which both have controller-gen as prerequisite and generate some golang code and yaml manifests 
 > 2. the code is formatted by `fmt` 
 > 3. validated by `vet` 
-> 4. run will run the go application by refering to the application entrypoint at ./cmd/main.go 
+> 4. `run` will run the go application by refering to the application entrypoint at ./cmd/main.go 
