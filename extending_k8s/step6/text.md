@@ -4,7 +4,7 @@ replace GhostSpec `api/v1/ghost_types.go:27` with the following snippet
 
 ```go
 type GhostSpec struct {
-  //+kubebuilder:validation:Pattern=`^[-a-z0-9]*$`
+  //+kubebuilder:validation:Pattern="^[-a-z0-9]*$"
   ImageTag string `json:"imageTag"`
 }
 ```
