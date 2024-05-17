@@ -7,63 +7,63 @@
     },
     "steps": [
       {
-        "title": "A Look into Custom Resource Definition (CRD) API",
+        "title": "A Look into Custom Resource Definition (CRD) API - 1 / 15",
         "text": "step1/text.md"
       },
       {
-        "title": "Install Kubebuilder and Create a New Project",
+        "title": "Install Kubebuilder and Create a New Project - 2 / 15",
         "text": "step2/text.md"
       },
       {
-        "title": "Create Our First API",
+        "title": "Create Our First API - 3 / 15",
         "text": "step3/text.md"
       },
       {
-        "title": "A Look into Kubebuilder Setup",
+        "title": "A Look into Kubebuilder Setup - 4 / 15",
         "text": "step4/text.md"
       },
       {
-        "title": "Add Some Logging to the Reconcile Function",
+        "title": "Add Some Logging to the Reconcile Function - 5 / 15",
         "text": "step5/text.md"
       },
       {
-        "title": "Implement the Desired State of the Ghost Operator",
+        "title": "Implement the Desired State of the Ghost Operator - 6 / 15",
         "text": "step6/text.md"
       },
       {
-        "title": "Access the Custom Resource Inside the Reconcile Function",
+        "title": "Access the Custom Resource Inside the Reconcile Function - 7 / 15",
         "text": "step7/text.md"
       },
       {
-        "title": "Implement the Ghost Operator Logic, Part 1 - PVC",
+        "title": "Implement the Ghost Operator Logic, Part 1 - PVC - 8 / 15",
         "text": "step8/text.md"
       },
       {
-        "title": "Implement the Ghost Operator Logic, Part 2 - RBAC",
+        "title": "Implement the Ghost Operator Logic, Part 2 - RBAC - 9 / 15",
         "text": "step9/text.md"
       },
       {
-        "title": "Implement the Ghost Operator Logic, Part 3 - Deployment",
+        "title": "Implement the Ghost Operator Logic, Part 3 - Deployment - 10 / 15",
         "text": "step10/text.md"
       },
       {
-        "title": "Implement the Ghost Operator Logic, Part 4 - Service",
+        "title": "Implement the Ghost Operator Logic, Part 4 - Service - 11 / 15",
         "text": "step11/text.md"
       },
       {
-        "title": "Implement the Final Logic of the Reconcile Function",
+        "title": "Implement the Final Logic of the Reconcile Function - 12 / 15",
         "text": "step12/text.md"
       },
       {
-        "title": "Update the Ghost Resource",
+        "title": "Update the Ghost Resource - 13 / 15",
         "text": "step13/text.md"
       },
       {
-        "title": "Delete the Ghost Resource",
+        "title": "Delete the Ghost Resource - 14 / 15",
         "text": "step14/text.md"
       },
       {
-        "title": "Deploy Ghost Operator to the Cluster",
+        "title": "Deploy Ghost Operator to the Cluster - 15 / 15",
         "text": "step15/text.md"
       }
     ],
