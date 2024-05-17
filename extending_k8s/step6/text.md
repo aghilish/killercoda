@@ -2,12 +2,14 @@ Now let us replace the default GhostSpec with a meaningful declartion of our des
 
 replace GhostSpec `api/v1/ghost_types.go:27` with the following snippet
 
-```go
+<pre>
+<code>
 type GhostSpec struct {
-  //+kubebuilder:validation:Pattern=``^[-a-z0-9]*$``
-  ImageTag string ``json:"imageTag"``
+  //+kubebuilder:validation:Pattern=`^[-a-z0-9]*$`
+  ImageTag string `json:"imageTag"`
 }
-```
+</code>
+</pre>
 
 This code has two key parts:
 
