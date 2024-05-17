@@ -1,4 +1,6 @@
-# WELL DONE 👨🏽‍🎓
+# WELL DONE 🥳
 
-## You just finished the Extending Kubernetes hands on lab.
-## Now go get yourself a cup of coffee ☕
+> You just became a k8s operator Guru! 👨🏽‍🎓
+> It's time to take a break and celebrate! 🎉 
+
+<img src="./assets/giphy.gif" alt="celebration!" width="100%">
