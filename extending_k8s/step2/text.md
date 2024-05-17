@@ -42,7 +42,7 @@ make run
 
 now let us have a look at the `run` target and all the prerequisite comamnds that need to run
 it looks something like this
-```shell
+```
 .PHONY: run
 run: manifests generate fmt vet ## Run a controller from your host.
 	go run ./cmd/main.go
