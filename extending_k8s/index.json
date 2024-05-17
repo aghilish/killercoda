@@ -8,78 +8,63 @@
     "steps": [
       {
         "title": "A Look into Custom Resource Definition (CRD) API",
-        "text": "step1/text.md",
-        "verify": "step1/verify.sh"
+        "text": "step1/text.md"
       },
       {
         "title": "Install Kubebuilder and Create a New Project",
-        "text": "step2/text.md",
-        "verify": "step2/verify.sh"
+        "text": "step2/text.md"
       },
       {
         "title": "Create Our First API",
-        "text": "step3/text.md",
-        "verify": "step3/verify.sh"
+        "text": "step3/text.md"
       },
       {
         "title": "A Look into Kubebuilder Setup",
-        "text": "step4/text.md",
-        "verify": "step4/verify.sh"
+        "text": "step4/text.md"
       },
       {
         "title": "Add Some Logging to the Reconcile Function",
-        "text": "step5/text.md",
-        "verify": "step5/verify.sh"
+        "text": "step5/text.md"
       },
       {
         "title": "Implement the Desired State of the Ghost Operator",
-        "text": "step6/text.md",
-        "verify": "step6/verify.sh"
+        "text": "step6/text.md"
       },
       {
         "title": "Access the Custom Resource Inside the Reconcile Function",
-        "text": "step7/text.md",
-        "verify": "step7/verify.sh"
+        "text": "step7/text.md"
       },
       {
         "title": "Implement the Ghost Operator Logic, Part 1 - PVC",
-        "text": "step8/text.md",
-        "verify": "step8/verify.sh"
+        "text": "step8/text.md"
       },
       {
         "title": "Implement the Ghost Operator Logic, Part 2 - RBAC",
-        "text": "step9/text.md",
-        "verify": "step9/verify.sh"
+        "text": "step9/text.md"
       },
       {
         "title": "Implement the Ghost Operator Logic, Part 3 - Deployment",
-        "text": "step10/text.md",
-        "verify": "step10/verify.sh"
+        "text": "step10/text.md"
       },
       {
         "title": "Implement the Ghost Operator Logic, Part 4 - Service",
-        "text": "step11/text.md",
-        "verify": "step11/verify.sh"
+        "text": "step11/text.md"
       },
       {
         "title": "Implement the Final Logic of the Reconcile Function",
-        "text": "step12/text.md",
-        "verify": "step12/verify.sh"
+        "text": "step12/text.md"
       },
       {
         "title": "Update the Ghost Resource",
-        "text": "step13/text.md",
-        "verify": "step13/verify.sh"
+        "text": "step13/text.md"
       },
       {
         "title": "Delete the Ghost Resource",
-        "text": "step14/text.md",
-        "verify": "step14/verify.sh"
+        "text": "step14/text.md"
       },
       {
         "title": "Deploy Ghost Operator to the Cluster",
-        "text": "step15/text.md",
-        "verify": "step15/verify.sh"
+        "text": "step15/text.md"
       }
     ],
     "assets": {
@@ -90,6 +75,6 @@
     }
   },
   "backend": {
-    "imageid": "kubernetes-kubeadm-2nodes"
+    "imageid": "kubernetes-kubeadm-1node-4GB"
   }
 }
