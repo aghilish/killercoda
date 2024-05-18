@@ -65,6 +65,10 @@
       {
         "title": "Deploy Ghost Operator to the Cluster - 15 / 15",
         "text": "step15/text.md"
+      },
+      {
+        "title": "Learning Resources",
+        "text": "step16/text.md"
       }
     ],
     "assets": {
