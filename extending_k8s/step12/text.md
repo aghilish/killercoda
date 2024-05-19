@@ -2,11 +2,13 @@ Next we need to use our helper functions and write our reconcile function. We st
 In case there is an error we update the status of our ghost deployment. For that, we need to make a couple of adjustments first.
 First we replace `GhostStatus` in `api/v1/ghost_types.go` with the following
 
-```go
+<code>
+<pre>
 type GhostStatus struct {
     Conditions []metav1.Condition `json:"conditions,omitempty"`
 }
-```
+</pre>
+</code>
 
 and we add two helper functions to our controller. `internal/controller/ghost_controller.go`
 
