@@ -5,7 +5,7 @@ Welcome to this hands on exercise on Extending Kubernetes
 
 In this training we will
 
-- Look into `Custom Resource Definition` API of Kuberenetes
+- Look into `Custom Resource Definition` API of Kubernetes
 - Install Kubebuilder and Create a New Project
 - Create Our First API
 - A Look into Kubebuilder Setup
