@@ -1,7 +1,7 @@
 
 # Extending Kubernetes
 
-Welcome to this hands on exercies on Extending Kubernetes
+Welcome to this hands on exercise on Extending Kubernetes
 
 In this training we will
 
