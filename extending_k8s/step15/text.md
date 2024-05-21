@@ -24,7 +24,7 @@ make deploy
 Undeploy
 
 ```shell
-make deploy
+make undeploy
 ```{{exec}}
 
 And we can look around and inspect the logs of our manager when we CRUD operations with our ghost API.
