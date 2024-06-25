@@ -10,4 +10,4 @@
 
 
 > Dynamic Admission Control [Details](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/)
-<img src="../assets//webhook.drawio.svg" alt="Dynamic Admission Control" width="100%">
+<img src="../assets/webhook.drawio.svg" alt="Dynamic Admission Control" width="100%">
