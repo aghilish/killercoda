@@ -1,0 +1,56 @@
+{
+  "title": "Extending Kubernetes",
+  "description": "Extending Kubernetes Hands on Lab",
+  "details": {
+    "intro": {
+      "text": "intro.md"
+    },
+    "steps": [
+      {
+        "title": "A Look into Admission Controllers - 1 / 8",
+        "text": "step1/text.md"
+      },
+      {
+        "title": "Dynamic Admission Control - 2 / 8",
+        "text": "step2/text.md"
+      },
+      {
+        "title": "Create Our First Webhook - 3 / 8",
+        "text": "step3/text.md"
+      },
+      {
+        "title": "Update Our Ghost Controller - 4 / 8",
+        "text": "step4/text.md"
+      },
+      {
+        "title": "Implement Webhook Logic - 5 / 8",
+        "text": "step5/text.md"
+      },
+      {
+        "title": "Deploy Webhook - 6 / 8",
+        "text": "step6/text.md"
+      },
+      {
+        "title": "Test Mutating Webhook - 7 / 8",
+        "text": "step7/text.md"
+      },
+      {
+        "title": "Test Validating Webhook - 8 / 8",
+        "text": "step8/text.md"
+      },
+      {
+        "title": "Learning Resources",
+        "text": "step9/text.md"
+      }
+    ],
+    "assets": {
+      "host01": []
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node-4GB"
+  }
+}
