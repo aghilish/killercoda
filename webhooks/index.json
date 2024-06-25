@@ -1,6 +1,6 @@
 {
-  "title": "Extending Kubernetes",
-  "description": "Extending Kubernetes Hands on Lab",
+  "title": "Kubernetes Webhooks",
+  "description": "A Hands on Lab on Kubernetes Webhooks",
   "details": {
     "intro": {
       "text": "intro.md"

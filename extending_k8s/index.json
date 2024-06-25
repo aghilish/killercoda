@@ -1,6 +1,6 @@
 {
   "title": "Extending Kubernetes",
-  "description": "Extending Kubernetes Hands on Lab",
+  "description": "A Hands on Lab on Extending Kubernetes",
   "details": {
     "intro": {
       "text": "intro.md"
