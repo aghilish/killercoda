@@ -4,7 +4,7 @@ let's render new manifests first
 
 ```bash
 make manifests
-```
+```{{exec}}
 Now are CRD is updated.
 
 and update our controller as follows.
@@ -24,4 +24,4 @@ existingDeployment.Spec.Template.Spec.Containers[0].Image != desiredDeployment.S
 and let's make sure we don't have any build error by running 
 ```bash
 make
-```
+```{{exec}}

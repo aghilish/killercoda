@@ -1,4 +1,4 @@
-Next we are gonna add a defaulting and validating logic to our admission webhook. If the replicas is set to 0 we set it to 2 and if during create or update the replicas is set to a value bigger than 5 the validation fails. let's replace the content of our webhook at `api/v1/ghost_webhook.go` with the following.
+Next we are going to add defaulting and validating logic to our admission webhook. If the replicas is set to 0 we set it to 2 and if during create or update, the replicas is set to a value bigger than 5 the validation fails. let's replace the content of our webhook at `api/v1/ghost_webhook.go` with the following.
 
 ```go
 package v1
