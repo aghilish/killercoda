@@ -55,8 +55,14 @@ to our cluster. Let us bump up our controller image tag to `v2`.
 
 ```bash
 export IMG=ttl.sh/operator-tutorial-with-webhook:1h
+```{{exec}}
+```bash
 make docker-build
+```{{exec}}
+```bash
 make docker-push
+```{{exec}}
+```bash
 make deploy
 ```{{exec}}
 
