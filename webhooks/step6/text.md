@@ -56,7 +56,7 @@ cert-manager-webhook-f6c9958d-jwhr2        1/1     Running   0          2m
 ```{{exec}}
 
 awesome, now let us build our new controller image and deploy everything (controller and admission webhooks)
-to our cluster. Let us bump up our controller image tag to `v2`. 
+to our cluster.
 
 ```bash
 export IMG=ttl.sh/operator-tutorial-with-webhook:1h
