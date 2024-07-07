@@ -3,9 +3,7 @@
   "description": "A Hands on Lab on Kubernetes Webhooks",
   "details": {
     "intro": {
-      "text": "intro.md",
-      "background": "init/background.sh",
-      "foreground": "init/foreground.sh"
+      "text": "intro.md"
     },
     "steps": [
       {
@@ -47,8 +45,6 @@
     ],
     "assets": {
       "host01": [
-        {"file": "init.sh", "target": "/ks", "chmod": "+x"},
-        {"file": "wait-init.sh", "target": "/ks", "chmod": "+x"}
       ]
     },
     "finish": {
