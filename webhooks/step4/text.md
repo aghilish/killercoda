@@ -8,7 +8,7 @@ make manifests
 Now are CRD is updated.
 
 and update our controller as follows.
-Update `generateDesiredDeployment` at `internal/controller/ghost_controller.go:253`
+Update `generateDesiredDeployment` at `internal/controller/ghost_controller.go:245`
 
 with the following
 ```go
