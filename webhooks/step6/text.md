@@ -54,7 +54,7 @@ awesome, now let us build our new controller image and deploy everything (contro
 to our cluster. Let us bump up our controller image tag to `v2`. 
 
 ```bash
-export IMG=c8n.io/aghilish/ghost-operator:v2
+export IMG=ttl.sh/operator-tutorial-with-webhook:1h
 make docker-build
 make docker-push
 make deploy
