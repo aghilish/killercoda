@@ -70,4 +70,4 @@ func validateReplicas(r *Ghost) (admission.Warnings, error) {
 	return nil, nil
 }
 
-```
+```{{copy}}

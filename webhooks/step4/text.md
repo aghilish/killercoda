@@ -13,7 +13,7 @@ Update `generateDesiredDeployment` at `internal/controller/ghost_controller.go:2
 with the following
 ```go
 replicas := ghost.Spec.Replicas
-```
+```{{copy}}
 
 and the update condition at `addOrUpdateDeployment` at `internal/controller/ghost_controller.go:243`
 ```go

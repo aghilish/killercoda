@@ -6,7 +6,7 @@ We also add a new target to our make file for installing cert-manager using a he
 
 So let's add the following to the botton of our make file.
 
-```c
+```go
 ##@ Helm
 
 HELM_VERSION ?= v3.7.1
@@ -30,7 +30,7 @@ install-cert-manager: helm ## Install cert-manager using Helm.
 uninstall-cert-manager: helm ## Uninstall cert-manager using Helm.
 		helm uninstall cert-manager --namespace cert-manager
 		kubectl delete namespace cert-manager
-```
+```{{copy}}
 
 cool, now let's instal cert-manage on our cluster:
 
