@@ -94,7 +94,7 @@ operator-tutorial-mutating-webhook-configuration   1          2m
 ```{{exec}}
 
 ```bash
-kubectl get mutatingwebhookconfigurations.admissionregistration.k8s.io -n operator-tutorial-system
+kubectl get validatingwebhookconfigurations.admissionregistration.k8s.io -n operator-tutorial-system
 ```{{exec}}
 
 ```bash

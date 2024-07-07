@@ -25,7 +25,7 @@ kubectl apply -f config/samples/blog_v1_ghost.yaml
 
 and check the number of replicas on the ghost resouce we see it is set to `2`.
 ```bash
-kubectl get ghosts.blog.example.com -n marketing ghost-sample -o jsonpath="{.spec.replicas}" | yq
+kubectl get ghosts.blog.example.com -n marketing ghost-sample -o jsonpath="{.spec.replicas}";echo;
 ```{{exec}}
 
 ```bash
