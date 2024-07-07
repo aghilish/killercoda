@@ -8,14 +8,14 @@ make manifests
 Now are CRD is updated.
 
 and update our controller as follows.
-Update `generateDesiredDeployment` at `internal/controller/ghost_controller.go:243`
+Update `generateDesiredDeployment` at `internal/controller/ghost_controller.go:253`
 
 with the following
 ```go
 replicas := ghost.Spec.Replicas
 ```{{copy}}
 
-and the update condition at `addOrUpdateDeployment` at `internal/controller/ghost_controller.go:243`
+and the update condition at `addOrUpdateDeployment` at `internal/controller/ghost_controller.go:217`
 ```go
 existingDeployment.Spec.Template.Spec.Containers[0].Image != desiredDeployment.Spec.Template.Spec.Containers[0].Image ||
 			*existingDeployment.Spec.Replicas != *desiredDeployment.Spec.Replicas
