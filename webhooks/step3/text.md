@@ -1,4 +1,4 @@
-first off, let us make sure go and kubebuilder are installed.
+first off, let us make sure go, kubebuilder and k9s are installed.
 
 ```bash
 # download kubebuilder and install locally.
@@ -13,6 +13,13 @@ curl -OL  https://go.dev/dl/go1.22.3.linux-amd64.tar.gz \
 &&  rm -rf /usr/local/go && tar -C /usr/local -xzf go1.22.3.linux-amd64.tar.gz \
 && export PATH=$PATH:/usr/local/go/bin
 ```{{exec}}
+
+and finally, k9s.
+
+```bash
+curl -L -O https://github.com/derailed/k9s/releases/download/v0.32.5/k9s_linux_amd64.deb \
+&& dpkg -i k9s_linux_amd64.deb
+```
 
 We pick up where we left off last time by cloning our ghost operator tutorial.
 
