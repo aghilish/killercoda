@@ -6,6 +6,7 @@
 
 ## How can we turn them on ?
 
+By passing their names to the --enable-admission-plugins option.
 ```bash
 kube-apiserver --enable-admission-plugins=NamespaceLifecycle,LimitRanger ...
 ```
