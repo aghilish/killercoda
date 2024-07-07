@@ -1,6 +1,11 @@
 Once our webhook is implemented, all that’s left to do is to create the `WebhookConfiguration` manifests required to register our webhooks with Kubernetes. The connection between the kubernetes api and our webhook server needs to be secure and encrypted. This can easily happen if we use certmanager togehter with the powerful scaffolding of kubebuilder.
 
 We need to enable the cert-manager deployment via kubebuilder, in order to do that we should edit `config/default/kustomization.yaml` and `config/crd/kustomization.yaml` files by uncommenting the sections marked by [WEBHOOK] and [CERTMANAGER] comments.
+Once the necessary sections are uncommented, let's run
+```bash
+make manifests
+```{{exec}}
+to make sure we have the cert-manager manifests for our webhook are generated.
 
 We also add a new target to our make file for installing cert-manager using a helm command.
 
