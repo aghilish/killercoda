@@ -19,7 +19,7 @@ and the update condition at `addOrUpdateDeployment` at `internal/controller/ghos
 ```go
 existingDeployment.Spec.Template.Spec.Containers[0].Image != desiredDeployment.Spec.Template.Spec.Containers[0].Image ||
 			*existingDeployment.Spec.Replicas != *desiredDeployment.Spec.Replicas
-```
+```{{copy}}
 
 and let's make sure we don't have any build error by running 
 ```bash

@@ -8,11 +8,33 @@
 
 By passing their names to the --enable-admission-plugins option.
 ```bash
-kube-apiserver --enable-admission-plugins=NamespaceLifecycle,LimitRanger ...
+cat /etc/kubernetes/manifests/kube-apiserver.yaml
+```{{exec}}
+
+```bash
+--enable-admission-plugins=NamespaceLifecycle,LimitRanger ...
 ```
 
 ## Which ones are enabled by default ?
 
 ```bash
-CertificateApproval, CertificateSigning, CertificateSubjectRestriction, DefaultIngressClass, DefaultStorageClass, DefaultTolerationSeconds, LimitRanger, NamespaceLifecycle, PersistentVolumeClaimResize, PodSecurity, Priority, ResourceQuota, RuntimeClass, ServiceAccount, StorageObjectInUseProtection, TaintNodesByCondition, ValidatingAdmissionPolicy, MutatingAdmissionWebhook,ValidatingAdmissionWebhook
+CertificateApproval
+CertificateSigning
+CertificateSubjectRestriction
+DefaultIngressClass
+DefaultStorageClass
+DefaultTolerationSeconds
+LimitRanger
+NamespaceLifecycle
+PersistentVolumeClaimResize
+PodSecurity
+Priority
+ResourceQuota
+RuntimeClass
+ServiceAccount
+StorageObjectInUseProtection
+TaintNodesByCondition
+ValidatingAdmissionPolicy
+MutatingAdmissionWebhook
+ValidatingAdmissionWebhook
 ```
