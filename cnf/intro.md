@@ -11,7 +11,7 @@ Shahrooz Aghili (@aghilish), Senior Solutions Architect @ Cloud Transformation a
     <a href="https://www.linkedin.com/in/aghilish">
       <img src="./assets/linkedin.png" alt="LinkedIn" width="50" height="50">
     </a>
-    <a href="https://www.youtube.com/c/aghilish">
+    <a href="https://www.youtube.com/@aghilish">
       <img src="./assets/youtube.png" alt="YouTube" width="50" height="50">
     </a>
   </div>
