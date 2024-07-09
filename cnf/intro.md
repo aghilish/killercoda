@@ -19,7 +19,7 @@ Shahrooz Aghili (@aghilish), Senior Solutions Architect @ Cloud Transformation a
   <br>
   <div>
     <a href="https://killercoda.com/aghilish/scenario/cnf">
-      <img src="./assets/qrcode_cnf_scanme.png" alt="QR Code" width="500" height="500">
+      <img src="./assets/qrcode_cnf.png" alt="QR Code" width="500" height="500">
     </a>
   </div>
 </div>
