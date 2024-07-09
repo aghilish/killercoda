@@ -8,19 +8,17 @@ Shahrooz Aghili (@aghilish), Senior Solutions Architect @ Cloud Transformation a
     <a href="https://github.com/aghilish">
       <img src="./assets/github.png" alt="GitHub" width="50" height="50">
     </a>
-    <br>
     <a href="https://www.linkedin.com/in/aghilish">
       <img src="./assets/linkedin.png" alt="LinkedIn" width="50" height="50">
     </a>
-    <br>
     <a href="https://www.youtube.com/c/aghilish">
       <img src="./assets/youtube.png" alt="YouTube" width="50" height="50">
     </a>
   </div>
   <!-- QR code image -->
-  <div style="margin-left: 20px;">
+  <div>
     <a href="https://killercoda.com/aghilish/scenario/cnf">
-      <img src="./assets/qrcode_cnf_scanme.png" alt="QR Code" width="250" height="250">
+      <img src="./assets/qrcode_cnf_scanme.png" alt="QR Code" width="500" height="500">
     </a>
   </div>
 </div>
