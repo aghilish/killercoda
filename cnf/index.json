@@ -1,0 +1,49 @@
+{
+  "title": "Crossplane Composition Functions, Step By Step",
+  "description": "A Hands on Lab to learn Crossplane Composition Functions, Cloud Native Frankfurt Meetup, 17.07.24",
+  "details": {
+    "intro": {
+      "text": "intro.md"
+    },
+    "steps": [
+      {
+        "title": "Crossplane Installation and Managed Resources",
+        "text": "step1/text.md"
+      },
+      {
+        "title": "Crossplane Machninary",
+        "text": "step2/text.md"
+      },
+      {
+        "title": "Compositions 1.0",
+        "text": "step3/text.md"
+      },
+      {
+        "title": "Compositions 2.0 - Composition Functions",
+        "text": "step4/text.md"
+      },
+      {
+        "title": "Our 1st Function",
+        "text": "step5/text.md"
+      },
+      {
+        "title": "Live Demo",
+        "text": "step6/text.md"
+      },
+      {
+        "title": "Learning Resources",
+        "text": "step7/text.md"
+      }
+    ],
+    "assets": {
+      "host01": [
+      ]
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node-4GB"
+  }
+}
