@@ -1,6 +1,6 @@
 
 # Crossplane Composition Functions, Step by Step
-## Cloud Native Frankfurt Meetup, 17.07.5024
+## Cloud Native Frankfurt Meetup, 17.07.2024
 Shahrooz Aghili (@aghilish), Senior Solutions Architect @ Cloud Transformation and System Engineering (Deloitte Consulting)
 <div style="display: flex; align-items: flex-start;">
   <!-- Column of icons -->
@@ -16,6 +16,7 @@ Shahrooz Aghili (@aghilish), Senior Solutions Architect @ Cloud Transformation a
     </a>
   </div>
   <!-- QR code image -->
+  <br>
   <div>
     <a href="https://killercoda.com/aghilish/scenario/cnf">
       <img src="./assets/qrcode_cnf_scanme.png" alt="QR Code" width="500" height="500">
