@@ -3,13 +3,13 @@
 > Crossplane is a Kubernetes Extension that helps platform teams manage anything using CRDs and Controllers (Public Cloud and On-Prem).
 > A Controlplane orchestrating other controlplanes.
 
- <img src="../assets/xplane.png" alt="Crossplane" width="800" height="600">
+ <img src="../assets/xplane.png" alt="Crossplane" width="1000" height="600">
 
 ## What are providers ?
 Providers are operators (controllers) with remote API expertise. 
 They Continually reconcile the desired state of the managed resources with the remote API.
 <br>
- <img src="../assets/providers.png" alt="Crossplane" width="1200" height="500">
+ <img src="../assets/providers.png" alt="Crossplane" width="1000" height="300">
 
 
 ## How can we install it ?
