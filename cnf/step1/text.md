@@ -94,7 +94,7 @@ kind: Bucket
 metadata:
   generateName: crossplane-cnf-bucket-
   labels:
-    cnf: true
+    provisioned-at: cnf-meetup
 spec:
   forProvider:
     region: eu-central-1
@@ -114,7 +114,7 @@ kubectl get managed
 ```{{exec}}
 
 ```bash
-BUCKET_NAME=$(kubectl get buckets.s3.aws.upbound.io -l cnf=true -o jsonpath='{.items[0].metadata.name}')
+BUCKET_NAME=$(kubectl get buckets.s3.aws.upbound.io -l provisioned-at=cnf-meetup -o jsonpath='{.items[0].metadata.name}')
 ```{{exec}}
 
 ```bash
