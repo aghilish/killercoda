@@ -51,7 +51,7 @@ metadata:
 spec:
   package: xpkg.upbound.io/upbound/provider-aws-s3:v1.1.0
 EOF
-```
+```{{exec}}
 
 verify the provider is running
 ```bash
@@ -72,7 +72,6 @@ And configure your provider to use the secret
 
 ```bash
 cat <<EOF | kubectl apply -f -
-controlplane $ cat <<EOF | kubectl apply -f -
 apiVersion: aws.upbound.io/v1beta1
 kind: ProviderConfig
 metadata:
@@ -93,11 +92,39 @@ cat <<EOF | kubectl create -f -
 apiVersion: s3.aws.upbound.io/v1beta1
 kind: Bucket
 metadata:
-  generateName: crossplane-bucket-
+  name: cnf-bucket
 spec:
   forProvider:
     region: eu-central-1
   providerConfigRef:
     name: default
 EOF
-```
+```{{exec}}
+
+Verify the bucket creation
+
+```bash
+kubectl get buckets
+```{{exec}}
+
+```bash
+kubectl get managed
+```{{exec}}
+
+```bash
+crossplane beta trace bucket.s3.aws.upbound.io/cnf-bucket
+```{{exec}}
+
+```bash
+aws s3 ls | grep cnf-bucket
+```{{exec}}
+
+```bash
+kubectl describe bucket.s3.aws.upbound.io/cnf-bucket
+```{{exec}}
+
+
+## Destroy
+```bash
+kubectl delete bucket.s3.aws.upbound.io/cnf-bucket
+```{{exec}}
