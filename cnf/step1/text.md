@@ -92,7 +92,9 @@ cat <<EOF | kubectl create -f -
 apiVersion: s3.aws.upbound.io/v1beta1
 kind: Bucket
 metadata:
-  name: cnf-bucket
+  generateName: crossplane-cnf-bucket-
+  labels:
+    cnf: true
 spec:
   forProvider:
     region: eu-central-1
@@ -112,19 +114,23 @@ kubectl get managed
 ```{{exec}}
 
 ```bash
-crossplane beta trace bucket.s3.aws.upbound.io/cnf-bucket
+BUCKET_NAME=$(kubectl get buckets.s3.aws.upbound.io -l cnf=true -o jsonpath='{.items[0].metadata.name}')
 ```{{exec}}
 
 ```bash
-aws s3 ls | grep cnf-bucket
+crossplane beta trace bucket.s3.aws.upbound.io/$BUCKET_NAME
 ```{{exec}}
 
 ```bash
-kubectl describe bucket.s3.aws.upbound.io/cnf-bucket
+aws s3 ls | grep crossplane-cnf-bucket
+```{{exec}}
+
+```bash
+kubectl describe bucket.s3.aws.upbound.io/$BUCKET_NAME
 ```{{exec}}
 
 
 ## Destroy
 ```bash
-kubectl delete bucket.s3.aws.upbound.io/cnf-bucket
+kubectl delete bucket.s3.aws.upbound.io/$BUCKET_NAME
 ```{{exec}}
