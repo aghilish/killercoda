@@ -1,40 +1,28 @@
-## What are Admission Controllers
+## What is crossplane ?
 
-> An admission controller is a piece of code that intercepts requests to the Kubernetes API server prior to persistence of the object, but after the request is authenticated and authorized. Admission controllers may be validating, mutating, or both. Mutating controllers may modify objects related to the requests they admit; validating controllers may not. Admission controllers limit requests to create, delete, modify objects. Admission controllers do not (and cannot) block requests to read (get, watch or list) objects.
+> Crossplane is a Kubernetes Extension that helps platform teams manage anything using CRDs and Controllers (Public Cloud and On-Prem).
+> A Controlplane orchestrating other controlplanes.
 
-[Kubernetes Docs on Admission Controllers](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/)
+ <img src="../assets/xplane.png" alt="Crossplane" width="800" height="600">
 
-## How can we turn them on ?
+## What are providers ?
+Providers are operators (controllers) with remote API expertise. 
+They Continually reconcile the desired state of the managed resources with the remote API.
+<br>
+ <img src="../assets/providers.png" alt="Crossplane" width="1200" height="500">
 
-By passing their names to the --enable-admission-plugins option.
+
+## How can we install it ?
+
 ```bash
-cat /etc/kubernetes/manifests/kube-apiserver.yaml
-```{{exec}}
-
-```bash
---enable-admission-plugins=NamespaceLifecycle,LimitRanger ...
+helm repo add crossplane-stable https://charts.crossplane.io/stable \
+&& helm repo update \
+&& helm install crossplane \
+--namespace crossplane-system \
+--create-namespace crossplane-stable/crossplane 
 ```
 
-## Which ones are enabled by default ?
-
-```bash
-CertificateApproval
-CertificateSigning
-CertificateSubjectRestriction
-DefaultIngressClass
-DefaultStorageClass
-DefaultTolerationSeconds
-LimitRanger
-NamespaceLifecycle
-PersistentVolumeClaimResize
-PodSecurity
-Priority
-ResourceQuota
-RuntimeClass
-ServiceAccount
-StorageObjectInUseProtection
-TaintNodesByCondition
-ValidatingAdmissionPolicy
-MutatingAdmissionWebhook
-ValidatingAdmissionWebhook
-```
+## A quick example
+Lets try creating an S3 bucket with crossplane
+<br>
+<img src="../assets/s3.png" alt="S3" width="300" height="200">
