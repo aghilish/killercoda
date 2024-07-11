@@ -72,6 +72,7 @@ And configure your provider to use the secret
 
 ```bash
 cat <<EOF | kubectl apply -f -
+controlplane $ cat <<EOF | kubectl apply -f -
 apiVersion: aws.upbound.io/v1beta1
 kind: ProviderConfig
 metadata:
@@ -81,8 +82,22 @@ spec:
     source: Secret
     secretRef:
       namespace: crossplane-system
-      name: aws-secret
+      name: aws-creds 
       key: creds
 EOF
 ```{{exec}}
 
+
+```bash
+cat <<EOF | kubectl create -f -
+apiVersion: s3.aws.upbound.io/v1beta1
+kind: Bucket
+metadata:
+  generateName: crossplane-bucket-
+spec:
+  forProvider:
+    region: eu-central-1
+  providerConfigRef:
+    name: default
+EOF
+```

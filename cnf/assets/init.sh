@@ -10,7 +10,7 @@ curl -L -O https://github.com/derailed/k9s/releases/download/v0.32.5/k9s_linux_a
 && dpkg -i k9s_linux_amd64.deb
 
 # install crossplane cli
-curl -sL "https://raw.githubusercontent.com/crossplane/crossplane/master/install.sh" | sh
-
+curl -sL "https://raw.githubusercontent.com/crossplane/crossplane/master/install.sh" | sh \
+&& mv crossplane /usr/local/bin
 # mark init finished
 touch /ks/.initfinished
