@@ -65,7 +65,7 @@ AWS_PROFILE=default && echo -e "[default]\naws_access_key_id = $(aws configure g
 ```{{exec}}
 
 ```bash
-kubectl create secret generic aws-creds -n crossplane-system --from-file=credentials=./aws-creds.txt
+kubectl create secret generic aws-creds -n crossplane-system --from-file=creds=./aws-creds.txt
 ```{{exec}}
 
 And configure your provider to use the secret
