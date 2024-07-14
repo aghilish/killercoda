@@ -1,10 +1,25 @@
-## Dynamic Admission Control
-> In addition to compiled-in admission plugins, admission plugins can be developed as extensions and run as webhooks configured at runtime. 
+## Crossplane Compositions
+> Using managed instances is not scalable. Crossplane compositions enable us to build complex infrastructure with simple interfaces. The simple interface is what platform engineers offer to end users.
 
-## What are Admission Webhooks
-> Admission webhooks are HTTP callbacks that receive admission requests and do something with them. You can define two types of admission webhooks, validating admission webhook and mutating admission webhook. Mutating admission webhooks are invoked first, and can modify objects sent to the API server to enforce custom defaults. After all object modifications are complete, and after the incoming object is validated by the API server, validating admission webhooks are invoked and can reject requests to enforce custom policies.
+### Restaurant Analogy
+ <img src="../assets/restaurant.png" alt="Restaurant" width="1000" height="300">
 
-> Admission Webhooks can run inside or outside the cluster. If We deploy them inside the cluster, we can leverage cert manager for automatically injecting the ssl certificate.
+### Crossplane Compositions
+ <img src="../assets/xcompositions.png" alt="Restaurant" width="1000" height="300">
 
-> Dynamic Admission Control [Details](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/)
-<img src="../assets/webhook-white.png" alt="Dynamic Admission Control" width="100%">
+### Compositions 1.0
+ <img src="../assets/xcompositions1.0.png" alt="Restaurant" width="1000" height="300">
+
+ The providers start reconciling the managed resources as soon as they are persisted to the etcd.
+
+### Example, AWS SQL Database
+Let's see how a postgres database can be provisioned
+```bash
+cat 1.0/defintion.yaml
+```{{exec}}
+```bash
+cat 1.0/aws.yaml
+```{{exec}}
+```bash
+cat 1.0/claim.yaml
+```
