@@ -12,14 +12,37 @@
 
  The providers start reconciling the managed resources as soon as they are persisted to the etcd.
 
-### Example, AWS SQL Database
-Let's see how a postgres database can be provisioned
+## Example, AWS SQL Database
+
+Lets see how a postgres database can be provisioned
+
+Platform
+
 ```bash
-cat 1.0/defintion.yaml
+kubectl apply -f 1.0/provider.yaml
 ```{{exec}}
 ```bash
-cat 1.0/aws.yaml
+kubectl apply -f 1.0/defintion.yaml
 ```{{exec}}
 ```bash
-cat 1.0/claim.yaml
+kubectl apply -f 1.0/aws.yaml
+```{{exec}}
+
+Dev
+```bash
+kubectl apply -f 1.0/claim.yaml
+```{{exec}}
+
+Verify the creation of the composition resources
+```bash
+crossplane beta trace sqlclaim.cnf.com/my-db
+```{{exec}}
+
+```bash
+kubectl get managed
+```{{exec}}
+
+## Destroy
+```bash
+kubectl delete -f 1.0/claim.yaml
 ```
