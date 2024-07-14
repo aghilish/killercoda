@@ -22,7 +22,7 @@ Platform
 kubectl apply -f 1.0/provider.yaml
 ```{{exec}}
 ```bash
-kubectl apply -f 1.0/defintion.yaml
+kubectl apply -f 1.0/definition.yaml
 ```{{exec}}
 ```bash
 kubectl apply -f 1.0/aws.yaml
