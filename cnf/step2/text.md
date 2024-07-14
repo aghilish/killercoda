@@ -29,6 +29,7 @@ kubectl apply -f 1.0/aws.yaml
 ```{{exec}}
 
 Dev
+
 ```bash
 kubectl apply -f 1.0/claim.yaml
 ```{{exec}}
