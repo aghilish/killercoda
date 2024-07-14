@@ -9,7 +9,7 @@
 Providers are operators (controllers) with remote API expertise. 
 They Continually reconcile the desired state of the managed resources with the remote API.
 <br>
- <img src="../assets/providers.png" alt="Crossplane" width="1000" height="300">
+ <img src="../assets/provider.png" alt="Crossplane" width="1000" height="300">
 
 
 ## How can we install it ?
@@ -38,7 +38,7 @@ kubectl api-resources | grep crossplane
 ## A quick example
 Lets try creating an S3 bucket with crossplane
 <br>
-<img src="../assets/s3.png" alt="S3" width="300" height="200">
+<img src="../assets/s3-bucket.png" alt="S3" width="300" height="200">
 
 First, we need to install the S3 provider
 
