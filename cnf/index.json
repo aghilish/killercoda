@@ -41,9 +41,9 @@
       "host01": [
         {"file": "init.sh", "target": "/ks", "chmod": "+x"},
         {"file": "wait-init.sh", "target": "/ks", "chmod": "+x"},
-        {"file": "1.0/aws.yaml", "target": "root/1.0", "chmod": "+x"},
-        {"file": "1.0/claim.yaml", "target": "root/1.0", "chmod": "+x"},
-        {"file": "1.0/aws.yaml", "target": "root/1.0", "chmod": "+x"}
+        {"file": "1.0/aws.yaml", "target": "/root/1.0", "chmod": "+x"},
+        {"file": "1.0/claim.yaml", "target": "/root/1.0", "chmod": "+x"},
+        {"file": "1.0/aws.yaml", "target": "/root/1.0", "chmod": "+x"}
       ]
     },
     "finish": {
