@@ -46,4 +46,4 @@ kubectl get managed
 ## Destroy
 ```bash
 kubectl delete -f 1.0/claim.yaml
-```
+```{{exec}}
