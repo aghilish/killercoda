@@ -1,4 +1,3 @@
-## Compositions 2.0
 >  Defining composition resources in an array makes the configuration management a tedious task, especially if the composition consists of many resources. There will be too much yaml to handle. 
 
 > Lack of programming constructs (loops and conditionals) is another limitation of staticly defined compositions.

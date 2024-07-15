@@ -17,24 +17,16 @@
         "text": "step2/text.md"
       },
       {
-        "title": "Compositions 1.0",
+        "title": "Compositions 2.0",
         "text": "step3/text.md"
       },
       {
-        "title": "Compositions 2.0 - Composition Functions",
+        "title": "Create Your Own Function",
         "text": "step4/text.md"
       },
       {
-        "title": "Our 1st Function",
-        "text": "step5/text.md"
-      },
-      {
-        "title": "Live Demo",
-        "text": "step6/text.md"
-      },
-      {
         "title": "Learning Resources",
-        "text": "step7/text.md"
+        "text": "step5/text.md"
       }
     ],
     "assets": {
