@@ -1,49 +1,44 @@
 ## Compositions 2.0
-> Using managed instances is not scalable. Crossplane compositions enable us to build complex infrastructure with simple interfaces. The simple interface is what platform engineers offer to end users.
+>  Defining composition resources in an array makes the configuration management a tedious task, especially if the composition consists of many resources. There will be too much yaml to handle. 
 
-### Restaurant Analogy
- <img src="../assets/restaurant.png" alt="Restaurant" width="1000" height="300">
+> Lack of programming constructs (loops and conditionals) is another limitation of staticly defined compositions.
 
-### Crossplane Compositions
- <img src="../assets/xcompositions.png" alt="Restaurant" width="1000" height="300">
+Starting from version `1.11`, crossplane introduced the `v1alpha1` version of the composition functions. With version `1.14` the functions api is versioned at `v1beta1`.
+### Functions Goals
+The crossplane team aims to achive these goals with functions
 
-### Compositions 1.0
- <img src="../assets/xcompositions1.0.png" alt="Restaurant" width="1000" height="300">
+* NOT to build a domain specific language (DSL) in yaml
+* Support complex logic
+* Support for any programming language (or use any text-processing tool)
+* Ease of development, sharing and running
+* Enable Multi-step pipelines
+* More flexible release cycles as a result of separation of functions from crossplane core
 
- The providers start reconciling the managed resources as soon as they are persisted to the etcd.
+### Compositions Pipeline
+ <img src="../assets/xcompositions2.0.png" alt="Xcompositions2.0" width="1000" height="350">
+<br>
+ <img src="../assets/xfn-pipeline.png" alt="pipeline" width="1000" height="300">
+<br>
+ <img src="../assets/xfn-internals.png" alt="pipeline" width="1000" height="350">
 
-## Example, AWS SQL Database
+```go
+message RunFunctionRequest {
+    RequestMeta meta = 1;
+    State observed = 2;
+    State desired = 3;
+    optional google.protobuf.Struct input = 4;
+}
+```
 
-Lets see how a postgres database can be provisioned
-
-Platform
-
+### Example of mutating desired state
 ```bash
-kubectl apply -f 1.0/provider.yaml
-```{{exec}}
-```bash
-kubectl apply -f 1.0/definition.yaml
-```{{exec}}
-```bash
-kubectl apply -f 1.0/aws.yaml
-```{{exec}}
-
-Dev
-
-```bash
-kubectl apply -f 1.0/claim.yaml
-```{{exec}}
-
-Verify the creation of the composition resources
-```bash
-crossplane beta trace sqlclaim.cnf.com/my-db
+cat 2.0/text.json | jq '.desired.composite.resource.labels |= {"cnf": "rocks"} + .'
 ```{{exec}}
 
-```bash
-kubectl get managed
-```{{exec}}
+### Example, AWS SQL Database
 
-## Destroy
+Let's see the revised version of the pervious composition
+
 ```bash
-kubectl delete -f 1.0/claim.yaml
+cat 2.0/aws.yaml
 ```{{exec}}
