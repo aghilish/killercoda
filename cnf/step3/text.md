@@ -15,7 +15,7 @@ The crossplane team aims to achive these goals with functions
 * More flexible release cycles as a result of separation of functions from crossplane core
 
 ### Compositions Pipeline
- <img src="../assets/xcompositions2.0.png" alt="Xcompositions2.0" width="1000" height="350">
+ <img src="../assets/xcompositions2.0.png" alt="Xcompositions2.0" width="1000" height="320">
 <br>
 <br>
 <img src="../assets/xfn-pipeline.png" alt="pipeline" width="1000" height="300">
