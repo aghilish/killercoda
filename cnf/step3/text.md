@@ -17,9 +17,11 @@ The crossplane team aims to achive these goals with functions
 ### Compositions Pipeline
  <img src="../assets/xcompositions2.0.png" alt="Xcompositions2.0" width="1000" height="350">
 <br>
- <img src="../assets/xfn-pipeline.png" alt="pipeline" width="1000" height="300">
 <br>
- <img src="../assets/xfn-internals.png" alt="pipeline" width="1000" height="350">
+<img src="../assets/xfn-pipeline.png" alt="pipeline" width="1000" height="300">
+<br>
+<br>
+<img src="../assets/xfn-internals.png" alt="pipeline" width="1000" height="350">
 
 ```go
 message RunFunctionRequest {
