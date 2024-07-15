@@ -33,7 +33,10 @@ message RunFunctionRequest {
 
 ### Example of mutating desired state
 ```bash
-cat 2.0/text.json | jq '.desired.composite.resource.labels |= {"cnf": "rocks"} + .'
+DATE=$(date +"%Y-%m-%dT%H:%M:%S%:z") && \
+cat 2.0/text.json \
+| jq '.desired.composite.resource.metadata.labels |= {"cnf": "rocks"} + .' \
+| jq --arg date "$DATE" '.desired.composite.resource.metadata.annotations |= {"pipeline.crossplane.io/date": $date} + .'
 ```{{exec}}
 
 ### Example, AWS SQL Database
