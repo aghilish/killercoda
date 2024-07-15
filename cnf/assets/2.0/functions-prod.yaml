@@ -1,0 +1,6 @@
+apiVersion: pkg.crossplane.io/v1beta1
+kind: Function
+metadata:
+  name: function-add-k8s-labels-annotations
+spec:
+  package: ttl.sh/cnf-add-s3-buckets:1h

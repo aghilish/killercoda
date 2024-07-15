@@ -1,0 +1,28 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: s3multiplys.demo.cnf.io
+spec:
+  group: demo.cnf.io
+  names:
+    kind: XS3Multiply
+    plural: XS3Multiplys
+  claimNames:
+    kind: S3Multiply
+    plural: S3Multiplys
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: ID of this S3 composition.
+              required:
+                - id

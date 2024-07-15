@@ -1,0 +1,7 @@
+apiVersion: demo.cnf.io/v1alpha1
+kind: S3Multiply
+metadata:
+  name: s3-multiply
+  namespace: default
+spec:
+  id: s3-multiply-test-function
