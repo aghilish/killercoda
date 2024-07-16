@@ -1,10 +1,12 @@
 ## Links
 
-1. [Video by Shahrooz Aghili](https://youtu.be/)
-2. [Killercoda Hands-on Lab](https://killercoda.com/aghilish/scenario/webhooks)
+1. [Video by Shahrooz Aghili](https://youtu.be/m6-xIhQcCe4)
+2. [Killercoda Hands-on Lab](https://killercoda.com/aghilish/scenario/cnf)
 
 ## Learning Resources
 
-1. [Admission Controllers](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/)
-2. [Dynamic Admission Controllers](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/)
-3. [Kubebuilder Docs](https://kubebuilder.io/cronjob-tutorial/webhook-implementation)
+
+1. [Functions](https://docs.crossplane.io/latest/concepts/composition-functions)
+2. [Function Guide](https://docs.crossplane.io/knowledge-base/guides/write-a-composition-function-in-go)
+3. [Package Docs](https://pkg.go.dev/github.com/crossplane/function-sdk-go)
+4. [CLI](https://docs.crossplane.io/latest/cli)
