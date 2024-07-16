@@ -2,6 +2,8 @@
 
 1. [Video by Shahrooz Aghili](https://youtu.be/m6-xIhQcCe4)
 2. [Killercoda Hands-on Lab](https://killercoda.com/aghilish/scenario/cnf)
+3. [Function CNF Gist](https://github.com/aghilish/cncf-frankfurt)
+4. [Function CNF](https://github.com/aghilish/function-cnf)
 
 ## Learning Resources
 
