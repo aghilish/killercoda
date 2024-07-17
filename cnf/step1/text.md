@@ -60,6 +60,10 @@ watch kubectl get providers
 
 Create a new secret with your aws credentials
 
+> 🚨🔔 Please first configure AWS CLI for your AWS account 
+```bash
+aws configure
+```{{exec}}
 ```bash 
 AWS_PROFILE=default && echo -e "[default]\naws_access_key_id = $(aws configure get aws_access_key_id --profile $AWS_PROFILE)\naws_secret_access_key = $(aws configure get aws_secret_access_key --profile $AWS_PROFILE)" > aws-creds.txt
 ```{{exec}}
