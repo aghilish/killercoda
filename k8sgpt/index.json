@@ -1,6 +1,6 @@
 {
-  "title": "Crossplane Composition Functions, Step By Step",
-  "description": "A Hands on Lab to learn Crossplane Composition Functions, Cloud Native Frankfurt Meetup, 17.07.24",
+  "title": "Bring LLMs to your SRE Workflow",
+  "description": "A Hands on Lab to learn k8sgpt CLI, k8sgpt Operator and Schednex - LLM based Scheduler",
   "details": {
     "intro": {
       "text": "intro.md",
