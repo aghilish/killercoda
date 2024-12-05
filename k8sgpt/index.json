@@ -1,0 +1,43 @@
+{
+  "title": "Crossplane Composition Functions, Step By Step",
+  "description": "A Hands on Lab to learn Crossplane Composition Functions, Cloud Native Frankfurt Meetup, 17.07.24",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "init/background.sh",
+      "foreground": "init/foreground.sh"
+    },
+    "steps": [
+      {
+        "title": "k8sgpt CLI",
+        "text": "step1/text.md"
+      },
+      {
+        "title": "k8sgpt Operator",
+        "text": "step2/text.md"
+      },
+      {
+        "title": "Schednex - LLM based Scheduler",
+        "text": "step3/text.md"
+      }
+    ],
+    "assets": {
+      "host01": [
+        {"file": "init.sh", "target": "/ks", "chmod": "+x"},
+        {"file": "wait-init.sh", "target": "/ks", "chmod": "+x"},
+        {"file": "1.0/aws.yaml", "target": "/root/1.0", "chmod": "+x"},
+        {"file": "1.0/claim.yaml", "target": "/root/1.0", "chmod": "+x"},
+        {"file": "1.0/provider.yaml", "target": "/root/1.0", "chmod": "+x"},
+        {"file": "1.0/definition.yaml", "target": "/root/1.0", "chmod": "+x"},
+        {"file": "2.0/text.json", "target": "/root/2.0", "chmod": "+x"},
+        {"file": "2.0/aws.yaml", "target": "/root/2.0", "chmod": "+x"}
+      ]
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node-4GB"
+  }
+}
