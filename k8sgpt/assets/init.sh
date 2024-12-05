@@ -11,7 +11,7 @@ curl -L -O https://github.com/derailed/k9s/releases/download/v0.32.5/k9s_linux_a
 
 # install k8sgpt cli
 curl -L -O https://github.com/k8sgpt-ai/k8sgpt/releases/download/v0.3.24/k8sgpt_amd64.deb \
-&& dpkg -i k8sgpt_amd64.deb
+&& dpkg -i --force-overwrite k8sgpt_amd64.deb
 
 # install go
 curl -OL  https://go.dev/dl/go1.22.3.linux-amd64.tar.gz \
