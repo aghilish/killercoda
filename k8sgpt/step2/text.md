@@ -1,49 +1,142 @@
-## Crossplane Compositions
-> Using managed instances is not scalable. Crossplane compositions enable us to build complex infrastructure with simple interfaces. The simple interface is what platform engineers offer to end users.
 
-### Restaurant Analogy
- <img src="../assets/restaurant.png" alt="Restaurant" width="1000" height="300">
-
-### Crossplane Compositions
- <img src="../assets/xcompositions.png" alt="Restaurant" width="1000" height="300">
-
-### Compositions 1.0
- <img src="../assets/xcompositions1.0.png" alt="Restaurant" width="1000" height="300">
-
- The providers start reconciling the managed resources as soon as they are persisted to the etcd.
-
-## Example, AWS SQL Database
-
-Lets see how a postgres database can be provisioned
-
-Platform
+## installing prometheus
 
 ```bash
-kubectl apply -f 1.0/provider.yaml
-```{{exec}}
-```bash
-kubectl apply -f 1.0/definition.yaml
-```{{exec}}
-```bash
-kubectl apply -f 1.0/aws.yaml
-```{{exec}}
-
-Dev
-
-```bash
-kubectl apply -f 1.0/claim.yaml
-```{{exec}}
-
-Verify the creation of the composition resources
-```bash
-crossplane beta trace sqlclaim.cnf.com/my-db
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 ```{{exec}}
 
 ```bash
-kubectl get managed
+helm repo update
 ```{{exec}}
 
-## Destroy
 ```bash
-kubectl delete -f 1.0/claim.yaml
+helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \ 
+--set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false --wait
+```{{exec}}
+
+## accessing the dashboards
+
+```bash
+kubectl port-forward svc/prometheus-kube-prometheus-prometheus 9090:9090
+```{{exec}}
+
+```bash
+kubectl port-forward svc/prometheus-grafana 3000:80
+```{{exec}}
+
+```bash
+Username: admin
+Password: prom-operator
+```{{exec}}
+
+```bash
+kubectl port-forward svc/prometheus-kube-prometheus-alertmanager 9093:9093
+```{{exec}}
+
+## deploy k8sgpt operator
+
+```bash
+helm repo add k8sgpt https://charts.k8sgpt.ai
+helm repo update
+```{{exec}}
+
+```bash
+helm install release k8sgpt/k8sgpt-operator -n k8sgpt-operator-system --create-namespace \
+--set interplex.enabled=true \
+--set grafanaDashboard.enabled=true \
+--set serviceMonitor.enabled=true
+```{{exec}}
+
+
+## bedrock 
+
+```bash
+kubectl create secret generic bedrock-sample-secret --from-literal=AWS_ACCESS_KEY_ID="$(echo $AWS_ACCESS_KEY_ID)" \ --from-literal=AWS_SECRET_ACCESS_KEY="$(echo $AWS_SECRET_ACCESS_KEY)" -n k8sgpt-operator-system
+```{{exec}}
+
+```bash
+kubectl apply -f - << EOF
+apiVersion: core.k8sgpt.ai/v1alpha1
+kind: K8sGPT
+metadata:
+  name: k8sgpt-sample
+  namespace: k8sgpt-operator-system
+spec:
+  ai:
+    enabled: true
+    secret:
+     name: bedrock-sample-secret
+    model: anthropic.claude-v2
+    region: eu-central-1
+    backend: amazonbedrock
+  noCache: true
+  version: v0.3.48
+EOF
+```
+
+## openai
+
+```bash
+export OPENAI_TOKEN=”Replace it with open openai token”
+```{{exec}}
+
+```bash
+kubectl create secret generic k8sgpt-openai-secret --from-literal=OPENAI_TOKEN=$OPENAI_TOKEN -n k8sgpt-operator-system
+```{{exec}}
+
+```bash
+kubectl apply -f - <<EOF
+apiVersion: core.k8sgpt.ai/v1alpha1
+kind: K8sGPT
+metadata:
+  name: k8sgpt-sample
+  namespace: k8sgpt-operator-system
+spec:
+  ai:
+    enabled: true
+    model: gpt-3.5-turbo
+    backend: openai
+    secret:
+      name: k8sgpt-openai-secret
+      key: OPENAI_TOKEN
+  noCache: false
+  version: v0.3.48
+EOF
+```
+
+
+```bash
+kubectl get all -n k8sgpt-operator-system
+```{{exec}}
+
+## install schednex
+```bash
+helm repo add schednex-ai https://charts.schednex.ai
+helm repo update
+```{{exec}}
+
+```bash
+helm install schednex-scheduler schednex-ai/schednex -n kube-system
+```{{exec}}
+
+## install metrics server
+```bash
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+```{{exec}}
+
+
+## create a sample pod to be scheduled by schednex
+
+```bash
+kubectl apply -f - << EOF
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  schedulerName: schednex
+  containers:
+  - image: nginx
+    name: nginx
+EOF
 ```{{exec}}
