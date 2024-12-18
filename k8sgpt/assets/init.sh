@@ -18,6 +18,8 @@ curl -OL  https://go.dev/dl/go1.22.3.linux-amd64.tar.gz \
 &&  rm -rf /usr/local/go && tar -C /usr/local -xzf go1.22.3.linux-amd64.tar.gz \
 && export PATH=$PATH:/usr/local/go/bin
 
+# install helm
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
 # mark init finished
 touch /ks/.initfinished
