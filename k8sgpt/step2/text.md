@@ -10,8 +10,7 @@ helm repo update
 ```{{exec}}
 
 ```bash
-helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \ 
---set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false --wait
+helm upgrade --install prometheus prometheus-community/kube-prometheus-stack --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false --wait
 ```{{exec}}
 
 ## accessing the dashboards
