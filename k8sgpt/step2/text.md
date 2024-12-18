@@ -40,10 +40,7 @@ helm repo update
 ```{{exec}}
 
 ```bash
-helm install release k8sgpt/k8sgpt-operator -n k8sgpt-operator-system --create-namespace \
---set interplex.enabled=true \
---set grafanaDashboard.enabled=true \
---set serviceMonitor.enabled=true
+helm install release k8sgpt/k8sgpt-operator -n k8sgpt-operator-system --create-namespace --set interplex.enabled=true --set grafanaDashboard.enabled=true --set serviceMonitor.enabled=true
 ```{{exec}}
 
 
@@ -71,7 +68,7 @@ spec:
   noCache: true
   version: v0.3.48
 EOF
-```
+```{{exec}}
 
 ## openai
 
@@ -101,7 +98,7 @@ spec:
   noCache: false
   version: v0.3.48
 EOF
-```
+```{{exec}}
 
 
 ```bash
