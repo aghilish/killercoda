@@ -47,7 +47,7 @@ helm install release k8sgpt/k8sgpt-operator -n k8sgpt-operator-system --create-n
 ## bedrock 
 
 ```bash
-kubectl create secret generic bedrock-sample-secret --from-literal=AWS_ACCESS_KEY_ID="$(echo $AWS_ACCESS_KEY_ID)" \ --from-literal=AWS_SECRET_ACCESS_KEY="$(echo $AWS_SECRET_ACCESS_KEY)" -n k8sgpt-operator-system
+kubectl create secret generic bedrock-sample-secret --from-literal=AWS_ACCESS_KEY_ID="$(echo $AWS_ACCESS_KEY_ID)" --from-literal=AWS_SECRET_ACCESS_KEY="$(echo $AWS_SECRET_ACCESS_KEY)" -n k8sgpt-operator-system
 ```{{exec}}
 
 ```bash
