@@ -120,7 +120,7 @@ spec:
     secret:
       name: k8sgpt-openai-secret
       key: OPENAI_TOKEN
-  noCache: false
+  noCache: true
   version: v0.3.48
 EOF
 ```{{exec}}
