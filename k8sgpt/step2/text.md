@@ -67,20 +67,19 @@ EOF
 [PROMETHEUS]({{TRAFFIC_HOST1_32090}})
 
 [GRAFANA]({{TRAFFIC_HOST1_32030}})
-
-[ALERT MANAGER]({{TRAFFIC_HOST1_32093}})
-
 ```bash
+# GRAFANA login
 Username: admin
 Password: prom-operator
-```{{copy}}
+```
 
+[ALERT MANAGER]({{TRAFFIC_HOST1_32093}})
 
 
 ## install metrics server
 ```bash
 kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
-```
+```{{exec}}
 ```bash
 kubectl -n kube-system patch deployment metrics-server --type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-insecure-tls"}]'
 ```{{exec}}
