@@ -19,6 +19,6 @@ Shahrooz Aghili (@aghilish), Senior Solutions Architect @ Cloud Transformation a
 
 In this hands on lab we will cover:
 
-- k8sgpt CLI
-- k8sgpt Operator
-- Schednex
+- [k8sgpt CLI](https://github.com/k8sgpt-ai/k8sgpt)
+- [k8sgpt Operator](https://github.com/k8sgpt-ai/k8sgpt-operator)
+- [Schednex](https://github.com/schednex-ai/schednex)

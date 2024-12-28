@@ -16,21 +16,66 @@ helm upgrade --install prometheus prometheus-community/kube-prometheus-stack --s
 ## accessing the dashboards
 
 ```bash
-kubectl port-forward svc/prometheus-kube-prometheus-prometheus 9090:9090
-```{{exec}}
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-nodeport
+  namespace: monitoring
+spec:
+  type: NodePort
+  selector:
+    app.kubernetes.io/name: prometheus
+  ports:
+    - protocol: TCP
+      port: 9090
+      targetPort: 9090
+      nodePort: 32090
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-nodeport
+  namespace: monitoring
+spec:
+  type: NodePort
+  selector:
+    app.kubernetes.io/name: grafana
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+      nodePort: 32030
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alertmanager-nodeport
+  namespace: monitoring
+spec:
+  type: NodePort
+  selector:
+    app.kubernetes.io/name: alertmanager
+  ports:
+    - protocol: TCP
+      port: 9093
+      targetPort: 9093
+      nodePort: 32093
+EOF
+```
 
-```bash
-kubectl port-forward svc/prometheus-grafana 3000:80
-```{{exec}}
+[PROMETHEUS]({{TRAFFIC_HOST1_32073}})
+
+[GRAFANA]({{TRAFFIC_HOST1_32073}})
+
+[ALERT MANAGER]({{TRAFFIC_HOST1_32073}})
 
 ```bash
 Username: admin
 Password: prom-operator
-```{{exec}}
+```{{copy}}
 
-```bash
-kubectl port-forward svc/prometheus-kube-prometheus-alertmanager 9093:9093
-```{{exec}}
+
 
 ## install metrics server
 ```bash
@@ -86,29 +131,3 @@ EOF
 kubectl get all -n k8sgpt-operator-system
 ```{{exec}}
 
-## install schednex
-```bash
-helm repo add schednex-ai https://charts.schednex.ai
-helm repo update
-```{{exec}}
-
-```bash
-helm install schednex-scheduler schednex-ai/schednex -n kube-system
-```{{exec}}
-
-
-## create a sample pod to be scheduled by schednex
-
-```bash
-kubectl apply -f - << EOF
-apiVersion: v1
-kind: Pod
-metadata:
-  name: nginx
-spec:
-  schedulerName: schednex
-  containers:
-  - image: nginx
-    name: nginx
-EOF
-```{{exec}}

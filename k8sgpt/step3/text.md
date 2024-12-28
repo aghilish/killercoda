@@ -13,14 +13,27 @@ helm install schednex-scheduler schednex-ai/schednex -n kube-system
 
 ```bash
 kubectl apply -f - << EOF
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: nginx
+  name: nginx-deployment
+  labels:
+    app: nginx
 spec:
-  schedulerName: schednex
-  containers:
-  - image: nginx
-    name: nginx
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      schedulerName: schednex
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
 EOF
 ```{{exec}}
