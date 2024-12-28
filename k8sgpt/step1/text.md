@@ -2,8 +2,6 @@
 
 ## 1. authenticate with ai backend 
 
-### 1.1 OpenAI
-
 ```bash
 k8sgpt generate
 ```{{exec}}
@@ -11,19 +9,6 @@ k8sgpt generate
 
 ```bash
 k8sgpt auth add --backend openai --model gpt-3.5-turbo
-```{{exec}}
-
-
-### 1.2 Amazon Bedrock
-
-Authenticate with K8SGPT user credentials on AWS Sandbox
-
-```bash
-aws configure
-```{{exec}}
-
-```bash
-k8sgpt auth add --backend amazonbedrock --model anthropic.claude-v2
 ```{{exec}}
 
 ```bash
@@ -58,10 +43,10 @@ EOF
 
 ## 3. analyze the issue
 
-```shell
+```bash
 k8sgpt analyze
-```
-```shell
-export AI_BACKEND=amazonbedrock # or openai . run `k8sgpt auth list` for a complete list of available ai backends
+```{{exec}}
+```bash
+export AI_BACKEND=openai #. run `k8sgpt auth list` for a complete list of available ai backends
 k8sgpt analyse --explain --backend $AI_BACKEND
-```
+```{{exec}}
