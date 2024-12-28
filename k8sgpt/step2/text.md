@@ -10,7 +10,7 @@ helm repo update
 ```{{exec}}
 
 ```bash
-helm upgrade --install prometheus prometheus-community/kube-prometheus-stack --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false --wait
+helm upgrade --install prometheus prometheus-community/kube-prometheus-stack --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false --wait -n monitoring
 ```{{exec}}
 
 ## accessing the dashboards
@@ -62,7 +62,7 @@ spec:
       targetPort: 9093
       nodePort: 32093
 EOF
-```
+```{{exec}}
 
 [PROMETHEUS]({{TRAFFIC_HOST1_32090}})
 
