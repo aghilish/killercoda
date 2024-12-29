@@ -16,8 +16,9 @@ Shahrooz Aghili (@aghilish), Senior Solutions Architect @ Cloud Transformation a
     </a>
   </div>
 </div>
+<br/>
 
-`k8sgpt` is a tool designed to scan Kubernetes clusters and diagnose issues through natural language processing. Leveraging SRE expertise, its analyzers extract critical information and enhance it with AI-driven insights.
+> `k8sgpt` is a tool designed to scan Kubernetes clusters and diagnose issues through natural language processing. Leveraging SRE expertise, its analyzers extract critical information and enhance it with AI-driven insights.
 
 In this hands on lab we will cover:
 
