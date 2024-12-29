@@ -1,11 +1,10 @@
+# k8spt operator - the 24/7 SRE assistant
 
-## installing prometheus
+## prerequisites
 
+- prometheus
 ```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-```{{exec}}
-
-```bash
 helm repo update
 ```{{exec}}
 
@@ -13,7 +12,7 @@ helm repo update
 helm upgrade --install prometheus prometheus-community/kube-prometheus-stack --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false --create-namespace -n monitoring --wait
 ```{{exec}}
 
-## accessing the dashboards
+- accessing the dashboards
 
 ```bash
 kubectl apply -f - <<EOF
@@ -76,7 +75,7 @@ Password: prom-operator
 [ALERT MANAGER]({{TRAFFIC_HOST1_32093}})
 
 
-## install metrics server
+- install metrics server
 ```bash
 kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 ```{{exec}}
@@ -124,7 +123,6 @@ spec:
   version: v0.3.48
 EOF
 ```{{exec}}
-
 
 ```bash
 kubectl get all -n k8sgpt-operator-system

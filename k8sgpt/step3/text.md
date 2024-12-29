@@ -1,4 +1,10 @@
+# schednex
+
+[Schednex](https://github.com/schednex-ai/schednex) is a Kubernetes scheduler that uses insights from K8sGPT to make intelligent decisions about where to place your workloads. It uses the K8sGPT API to get recommendations for the best node to place a pod based on the pod's requirements and the current state of the cluster. If it cannot make the decision in a timely fashion it will leverage the default scheduler, and always enable a placement decision.
+
+
 ## install schednex
+
 ```bash
 helm repo add schednex-ai https://charts.schednex.ai
 helm repo update
