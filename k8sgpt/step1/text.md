@@ -7,7 +7,7 @@ k8sgpt --help
 ```{{exec}}
 
 ## 1. authenticate cli with ai backend 
-[! CAUTION] >
+> [!CAUTION]
 > It is recommended to generate a new API key for your chosen AI backend and deactivating or deleting it immediately after completing the lab. This ensures better security.
 
 ```bash
