@@ -17,8 +17,11 @@ Shahrooz Aghili (@aghilish), Senior Solutions Architect @ Cloud Transformation a
   </div>
 </div>
 
+`k8sgpt` is a tool designed to scan Kubernetes clusters and diagnose issues through natural language processing. Leveraging SRE expertise, its analyzers extract critical information and enhance it with AI-driven insights.
+
 In this hands on lab we will cover:
 
 - [k8sgpt CLI](https://github.com/k8sgpt-ai/k8sgpt)
+- [k8sgpt Docs](https://docs.k8sgpt.ai)
 - [k8sgpt Operator](https://github.com/k8sgpt-ai/k8sgpt-operator)
 - [Schednex](https://github.com/schednex-ai/schednex)
