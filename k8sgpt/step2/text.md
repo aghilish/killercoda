@@ -1,4 +1,4 @@
-# k8spt operator - the 24/7 SRE assistant
+# k8sgpt operator - the 24/7 SRE assistant
 
 ## prerequisites
 
