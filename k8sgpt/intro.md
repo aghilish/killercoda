@@ -15,6 +15,13 @@ Shahrooz Aghili (@aghilish), Senior Solutions Architect @ Cloud Transformation a
       <img src="./assets/youtube.png" alt="YouTube" width="50" height="50">
     </a>
   </div>
+  <!-- QR code image -->
+  <br>
+  <div>
+    <a href="https://killercoda.com/aghilish/scenario/k8ggpt">
+      <img src="./assets/qr.png" alt="QR Code" width="500" height="500">
+    </a>
+  </div>
 </div>
 <br/>
 
