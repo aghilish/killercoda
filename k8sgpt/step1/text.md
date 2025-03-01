@@ -83,6 +83,6 @@ k8sgpt analyse --explain --backend $AI_BACKEND
 ## 4. how k8sgpt cli works with an ai backend e.g. openai
 <div style="display: flex; flex-direction: column; align-items: center;">
     <a href="https://drive.google.com/file/d/1pq_vnVTcWjW1Dv6oCRfms1w-oxhrC_5l/view">
-      How Schednex works with K8sGPT
+      How k8sgpt cli works with an ai backend 
     </a>
 </div>
