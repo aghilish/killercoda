@@ -4,7 +4,7 @@
 
 ## install schednex
 
-````bash
+```bash
 helm repo add schednex-ai https://charts.schednex.ai
 helm repo update
 ```{{exec}}
@@ -13,15 +13,11 @@ helm repo update
 helm install schednex-scheduler schednex-ai/schednex -n kube-system
 ```{{exec}}
 
-
 ## how schednex works with k8sgpt
-<div style="display: flex; align-items: flex-start;">
-  <!-- Column of icons -->
-  <div style="display: flex; flex-direction: column; align-items: center;">
+<div style="display: flex; flex-direction: column; align-items: center;">
     <a href="https://drive.google.com/file/d/1aTYlrlcfZuM092X8jpAQxzNL82pyA_dz/view">
       How Schednex works with K8sGPT
     </a>
-  </div>
 </div>
 
 ## create a sample pod to be scheduled by schednex
