@@ -2,10 +2,9 @@
 
 [Schednex](https://github.com/schednex-ai/schednex) is a Kubernetes scheduler that uses insights from K8sGPT to make intelligent decisions about where to place your workloads. It uses the K8sGPT API to get recommendations for the best node to place a pod based on the pod's requirements and the current state of the cluster. If it cannot make the decision in a timely fashion it will leverage the default scheduler, and always enable a placement decision.
 
-
 ## install schednex
 
-```bash
+````bash
 helm repo add schednex-ai https://charts.schednex.ai
 helm repo update
 ```{{exec}}
@@ -14,6 +13,16 @@ helm repo update
 helm install schednex-scheduler schednex-ai/schednex -n kube-system
 ```{{exec}}
 
+
+## how schednex works with k8sgpt
+<div style="display: flex; align-items: flex-start;">
+  <!-- Column of icons -->
+  <div style="display: flex; flex-direction: column; align-items: center;">
+    <a href="https://drive.google.com/file/d/1aTYlrlcfZuM092X8jpAQxzNL82pyA_dz/view">
+      How Schednex works with K8sGPT
+    </a>
+  </div>
+</div>
 
 ## create a sample pod to be scheduled by schednex
 
@@ -43,3 +52,4 @@ spec:
         - containerPort: 80
 EOF
 ```{{exec}}
+````
