@@ -79,3 +79,10 @@ You can explicitly select the AI backend using the `--backend` flag, which is us
 export AI_BACKEND=openai #. run `k8sgpt auth list` for a complete list of available ai backends
 k8sgpt analyse --explain --backend $AI_BACKEND
 ```{{exec}}
+
+## 4. how k8sgpt cli works with an ai backend e.g. openai
+<div style="display: flex; flex-direction: column; align-items: center;">
+    <a href="https://drive.google.com/file/d/1pq_vnVTcWjW1Dv6oCRfms1w-oxhrC_5l/view">
+      How Schednex works with K8sGPT
+    </a>
+</div>
