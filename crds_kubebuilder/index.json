@@ -1,0 +1,60 @@
+{
+  "title": "Building a Custom Resource with Kubebuilder",
+  "description": "A Hands-on Lab to Create a Custom Resource and Controller with Kubebuilder",
+  "details": {
+    "intro": {
+      "text": "intro.md"
+    },
+    "steps": [
+      {
+        "title": "Set Up Your Environment - 1 / 10",
+        "text": "step1/text.md"
+      },
+      {
+        "title": "Initialize a Kubebuilder Project - 2 / 10",
+        "text": "step2/text.md"
+      },
+      {
+        "title": "Create a Custom Resource Definition (CRD) - 3 / 10",
+        "text": "step3/text.md"
+      },
+      {
+        "title": "Define the Spec and Status - 4 / 10",
+        "text": "step4/text.md"
+      },
+      {
+        "title": "Add Validation with Markers - 5 / 10",
+        "text": "step5/text.md"
+      },
+      {
+        "title": "Generate and Install the CRD - 6 / 10",
+        "text": "step6/text.md"
+      },
+      {
+        "title": "Create a Sample Custom Resource - 7 / 10",
+        "text": "step7/text.md"
+      },
+      {
+        "title": "Run the Controller Locally - 8 / 10",
+        "text": "step8/text.md"
+      },
+      {
+        "title": "Clean Up Resources - 9 / 10",
+        "text": "step9/text.md"
+      },
+      {
+        "title": "Explore Further Resources - 10 / 10",
+        "text": "step10/text.md"
+      }
+    ],
+    "assets": {
+      "host01": []
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node-4GB"
+  }
+}
