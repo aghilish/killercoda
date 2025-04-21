@@ -6,15 +6,13 @@ Edit `api/v1/task_types.go` again to add markers above `TaskSpec`:
 
 ```shell
 # Add the XValidation marker above the TaskSpec struct
-sed -i '/type TaskSpec struct {/i \
-\/\/ +kubebuilder:validation:XValidation:rule="self.schedule == oldSelf.schedule",message="Schedule is immutable"' api/v1/task_types.go
-```{{exec}}
+// +kubebuilder:validation:XValidation:rule="self.schedule == oldSelf.schedule",message="Schedule is immutable"
+```{{copy}}
 
 ```shell
 # Add the Pattern marker above the Command field
-sed -i '/Command string `json:"command"`/i \
-    \/\/ +kubebuilder:validation:Pattern=`^[a-zA-Z][a-zA-Z0-9]*$`' api/v1/task_types.go
-```{{exec}}    
+// +kubebuilder:validation:Pattern=`^[a-zA-Z][a-zA-Z0-9]*$`
+```{{copy}}    
 
 The updated `TaskSpec` section now looks like:
 

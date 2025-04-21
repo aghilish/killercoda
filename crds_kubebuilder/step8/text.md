@@ -23,4 +23,4 @@ kubectl get tasks.automation.example.com -n default
 
 You’ll see logs in the controller terminal indicating it’s reconciling the `sample-task` resource. Press `Ctrl+C` in the controller terminal to stop it when you’re done observing.
 
-> Note: The controller doesn’t update the `Status` yet because we haven’t implemented reconciliation logic. That’s an optional next step!
+> Note: The controller doesn’t update the `Status` yet because we haven’t implemented reconciliation logic. We'll cover that in the next tutorial.
