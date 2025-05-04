@@ -5,21 +5,19 @@ Let’s add validation to ensure the `Schedule` field is immutable and the `Comm
 Edit `api/v1/task_types.go` again to add markers above `TaskSpec`:
 
 ```shell
-# Add the XValidation marker above the TaskSpec struct
 // +kubebuilder:validation:XValidation:rule="self.schedule == oldSelf.schedule",message="Schedule is immutable"
 ```{{copy}}
 
 ```shell
-# Add the Pattern marker above the Command field
 // +kubebuilder:validation:Pattern=`^[a-zA-Z][a-zA-Z0-9]*$`
 ```{{copy}}    
 
 The updated `TaskSpec` section now looks like:
 
-```go
+```shell
 // +kubebuilder:validation:XValidation:rule="self.schedule == oldSelf.schedule",message="Schedule is immutable"
-// +kubebuilder:validation:Pattern=`^[a-zA-Z][a-zA-Z0-9]*`
 type TaskSpec struct {
+    // +kubebuilder:validation:Pattern=`^[a-zA-Z][a-zA-Z0-9]*`
     Command string `json:"command"` // Command to execute
     Schedule string `json:"schedule"` // Schedule in cron format
 }
