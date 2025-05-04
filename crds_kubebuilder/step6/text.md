@@ -1,9 +1,6 @@
-
-#### `step6/text.md` - Generate and Install the CRD
-```markdown
 # Step 6: Generate and Install the CRD
 
-Generate the CRD manifest based on our definitions:
+Generate the CRD manifest based on our definitions
 
 ```shell
 make manifests
