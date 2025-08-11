@@ -17,6 +17,9 @@ echo "Note: In a real environment, this would open a browser at http://localhost
 echo "The inspector provides a UI to test MCP resources, tools, and prompts"
 ```{{exec}}
 
+[INSPECTOR]({{TRAFFIC_HOST1_3000}})
+[INSPECTOR]({{TRAFFIC_HOST1_6274}})
+
 ## Create Claude Desktop Configuration
 
 Let's create a configuration file for Claude Desktop:
