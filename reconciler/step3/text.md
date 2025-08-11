@@ -6,7 +6,7 @@ Let's set up everything we need to build MCP servers and connect them to AI appl
 
 First, ensure we have Node.js 18+ for MCP SDK compatibility:
 
-````bash
+```bash
 # Check current Node.js version
 node --version
 
