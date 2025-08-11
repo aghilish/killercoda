@@ -132,12 +132,10 @@ cat > package.json << 'EOF'
   }
 }
 EOF
-
 echo "Project structure created"
 echo "Installing dependencies..."
 npm install
 echo "Dependencies installed"
-
 ```{{exec}}
 
 ## Verify Kubernetes Access
