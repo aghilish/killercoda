@@ -1,0 +1,68 @@
+{
+  "title": "Building a Kubernetes Operator for MCP Servers",
+  "description": "A Complete Guide to Model Context Protocol (MCP) and Building Kubernetes Operators for MCP Server Management",
+  "details": {
+    "intro": {
+      "text": "intro.md"
+    },
+    "steps": [
+      {
+        "title": "Introduction to Model Context Protocol (MCP) - 1 / 12",
+        "text": "step1/text.md"
+      },
+      {
+        "title": "MCP Building Blocks: Servers, Clients, and Components - 2 / 12",
+        "text": "step2/text.md"
+      },
+      {
+        "title": "Setting up MCP Development Environment - 3 / 12",
+        "text": "step3/text.md"
+      },
+      {
+        "title": "Building Your First MCP Server - 4 / 12",
+        "text": "step4/text.md"
+      },
+      {
+        "title": "Connecting MCP Servers to LLMs - 5 / 12",
+        "text": "step5/text.md"
+      },
+      {
+        "title": "Kubernetes Controllers and Reconciliation Fundamentals - 6 / 12",
+        "text": "step6/text.md"
+      },
+      {
+        "title": "Defining the MCPServer Custom Resource - 7 / 12",
+        "text": "step7/text.md"
+      },
+      {
+        "title": "Reconciliation Patterns for MCP Workloads - 8 / 12",
+        "text": "step8/text.md"
+      },
+      {
+        "title": "Operator Architecture Design - 9 / 12",
+        "text": "step9/text.md"
+      },
+      {
+        "title": "Implementing the MCPServer Controller - 10 / 12",
+        "text": "step10/text.md"
+      },
+      {
+        "title": "Deployment and Service Management - 11 / 12",
+        "text": "step11/text.md"
+      },
+      {
+        "title": "Testing and Production Considerations - 12 / 12",
+        "text": "step12/text.md"
+      }
+    ],
+    "assets": {
+      "host01": []
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node-4GB"
+  }
+}
