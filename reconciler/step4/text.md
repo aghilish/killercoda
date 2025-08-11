@@ -6,9 +6,7 @@ Now let's build a complete MCP server with Kubernetes integration! We'll create 
 
 Let's start by creating our first Kubernetes-aware MCP server:
 
-```bash
-cd /workspace/mcp-lab
-
+````bash
 # Create the main server file
 cat > src/servers/k8s-mcp-server.ts << 'EOF'
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -91,7 +89,7 @@ server.registerResource(
   },
   async (uri, context) => {
     const namespace = context.namespace || 'default';
-    
+
     try {
       const response = await k8sApi.listNamespacedPod(namespace);
       const pods = response.body.items.map(pod => ({
@@ -146,7 +144,7 @@ server.registerTool(
   async ({ name, image, namespace }) => {
     try {
       const podManifest = {
-        metadata: { 
+        metadata: {
           name,
           labels: { 'created-by': 'mcp-server' }
         },
@@ -163,7 +161,7 @@ server.registerTool(
       };
 
       const response = await k8sApi.createNamespacedPod(namespace, podManifest);
-      
+
       return {
         content: [{
           type: "text",
@@ -175,7 +173,7 @@ server.registerTool(
     } catch (error) {
       return {
         content: [{
-          type: "text", 
+          type: "text",
           text: `❌ Failed to create pod: ${error.message}`
         }],
         isError: true
@@ -188,7 +186,7 @@ server.registerTool(
 server.registerTool(
   "get-pod-logs",
   {
-    title: "Get Pod Logs", 
+    title: "Get Pod Logs",
     description: "Retrieve logs from a specific pod",
     inputSchema: {
       name: z.string().describe("Pod name"),
@@ -199,8 +197,8 @@ server.registerTool(
   async ({ name, namespace, lines }) => {
     try {
       const response = await k8sApi.readNamespacedPodLog(
-        name, 
-        namespace, 
+        name,
+        namespace,
         undefined, // container name
         false, // follow
         undefined, // limitBytes
@@ -233,7 +231,7 @@ server.registerTool(
   "delete-pod",
   {
     title: "Delete Kubernetes Pod",
-    description: "Delete a specific pod", 
+    description: "Delete a specific pod",
     inputSchema: {
       name: z.string().describe("Pod name"),
       namespace: z.string().default("default").describe("Pod namespace")
@@ -242,7 +240,7 @@ server.registerTool(
   async ({ name, namespace }) => {
     try {
       await k8sApi.deleteNamespacedPod(name, namespace);
-      
+
       return {
         content: [{
           type: "text",
@@ -287,13 +285,13 @@ server.registerPrompt(
     messages: [{
       role: "user",
       content: {
-        type: "text", 
-        text: `Please help me troubleshoot the Kubernetes pod "${podName}" in namespace "${namespace}". 
+        type: "text",
+        text: `Please help me troubleshoot the Kubernetes pod "${podName}" in namespace "${namespace}".
 
 Follow this systematic approach:
 1. Check pod status and phase
 2. Examine recent events
-3. Review container logs  
+3. Review container logs
 4. Verify resource requests/limits
 5. Check network connectivity
 6. Validate persistent volume claims
@@ -396,9 +394,10 @@ kubectl get pods --all-namespaces --no-headers | wc -l | xargs echo "Total pods 
 
 echo "✅ MCP Server with Kubernetes integration is ready!"
 echo "📋 Your server provides:"
-echo "  - Resources: cluster-nodes, namespace-pods"  
+echo "  - Resources: cluster-nodes, namespace-pods"
 echo "  - Tools: create-pod, get-pod-logs, delete-pod"
 echo "  - Prompts: troubleshoot-pod, optimize-resources"
 ```{{exec}}
 
 Great! You've built your first MCP server with comprehensive Kubernetes integration. In the next step, we'll connect it to AI applications!
+````

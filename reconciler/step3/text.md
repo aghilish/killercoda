@@ -6,7 +6,7 @@ Let's set up everything we need to build MCP servers and connect them to AI appl
 
 First, ensure we have Node.js 18+ for MCP SDK compatibility:
 
-```bash
+````bash
 # Check current Node.js version
 node --version
 
@@ -134,6 +134,10 @@ cat > package.json << 'EOF'
 EOF
 
 echo "Project structure created"
+echo "Installing dependencies..."
+npm install
+echo "Dependencies installed"
+
 ```{{exec}}
 
 ## Verify Kubernetes Access
@@ -196,9 +200,8 @@ echo "=== MCP Development Environment Setup Complete ==="
 echo "Node.js version: $(node --version)"
 echo "npm version: $(npm --version)"
 echo "TypeScript: $(npx tsc --version)"
-echo "Kubernetes cluster: $(kubectl cluster-info --short)"
-echo "Project structure:"
-find . -name "*.json" -o -name "*.ts" | head -10
+echo "Kubernetes cluster: $(kubectl cluster-info)"
 ```{{exec}}
 
 Excellent! Our development environment is ready. In the next step, we'll build our first MCP server with Kubernetes integration.
+````
