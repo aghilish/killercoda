@@ -7,7 +7,6 @@ Now let's build a complete MCP server with Kubernetes integration! We'll create 
 Let's start by creating our first Kubernetes-aware MCP server:
 
 ```bash
-cd /workspace/mcp-lab
 
 # Create the main server file
 cat > src/servers/k8s-mcp-server.ts << 'EOF'
