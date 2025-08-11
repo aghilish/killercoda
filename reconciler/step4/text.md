@@ -400,4 +400,4 @@ echo "  - Prompts: troubleshoot-pod, optimize-resources"
 ```{{exec}}
 
 Great! You've built your first MCP server with comprehensive Kubernetes integration. In the next step, we'll connect it to AI applications!
-````
+
