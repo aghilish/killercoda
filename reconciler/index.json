@@ -28,27 +28,27 @@
       },
       {
         "title": "Defining the MCPServer Custom Resource - 6 / 11",
-        "text": "step7/text.md"
+        "text": "step6/text.md"
       },
       {
         "title": "Reconciliation Patterns for MCP Workloads - 7 / 11",
-        "text": "step8/text.md"
+        "text": "step7/text.md"
       },
       {
         "title": "Operator Architecture Design - 8 / 11",
-        "text": "step9/text.md"
+        "text": "step8/text.md"
       },
       {
         "title": "Implementing the MCPServer Controller - 9 / 11",
-        "text": "step10/text.md"
+        "text": "step9/text.md"
       },
       {
         "title": "Production Deployment and Service Management - 10 / 11",
-        "text": "step11/text.md"
+        "text": "step10/text.md"
       },
       {
         "title": "Testing and Production Considerations - 11 / 11",
-        "text": "step12/text.md"
+        "text": "step11/text.md"
       }
     ],
     "assets": {
