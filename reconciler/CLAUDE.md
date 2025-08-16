@@ -50,12 +50,12 @@ The repository is structured as a Killercoda scenario with 12 sequential steps:
 ```bash
 # Node.js and MCP SDK setup
 npm install @modelcontextprotocol/sdk zod @kubernetes/client-node
-npm install -g @modelcontextprotocol/inspector
+npm install --save-dev typescript @types/node ts-node
 
 # MCP server development
 npm run build
 npm run dev
-mcp-inspector src/servers/server.ts
+npm test
 ```
 
 ### Kubernetes Operator Development

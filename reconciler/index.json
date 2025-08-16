@@ -23,7 +23,7 @@
         "text": "step4/text.md"
       },
       {
-        "title": "Connecting MCP Servers to LLMs - 5 / 12",
+        "title": "LLM Integration and Testing - 5 / 12",
         "text": "step5/text.md"
       },
       {
@@ -47,7 +47,7 @@
         "text": "step10/text.md"
       },
       {
-        "title": "Deployment and Service Management - 11 / 12",
+        "title": "Production Deployment and Service Management - 11 / 12",
         "text": "step11/text.md"
       },
       {
