@@ -12,7 +12,7 @@ Now let's design the complete architecture for our MCPServer operator. We'll def
 
 ## Operator Control Loop
 
-<img src="../assets/k8s-mcp-control-loop.svg" alt="k8s-mcp-control-loop">
+<img src="../assets/k8s-mcp-controller-loop.svg" alt="k8s-mcp-control-loop">
 
 Let's implement key operator design patterns:
 
