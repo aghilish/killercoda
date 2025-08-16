@@ -4,14 +4,15 @@ Now let's design the complete architecture for our MCPServer operator. We'll def
 
 ## Overall Architecture Overview
 
-![k8s-mcp-architecture](../assets/k8s-mcp-architecture.svg)
+<img src="../assets/k8s-mcp-architecture.svg" alt="k8s-mcp-architecture">
 
 ## Component Interaction Model
 
-![k8s-mcp-interaction-model](../assets/k8s-mcp-interaction-model.svg)
+<img src="../assets/k8s-mcp-interaction-model.svg" alt="k8s-mcp-interaction-model">
 
 ## Operator Control Loop
-![k8s-mcp-control-loop](../assets/k8s-mcp-control-loop.svg)
+
+<img src="../assets/k8s-mcp-control-loop.svg" alt="k8s-mcp-control-loop">
 
 Let's implement key operator design patterns:
 
