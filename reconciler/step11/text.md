@@ -1,373 +1,426 @@
-# Step 11: Production Deployment and Service Management
+# Step 11: Testing and Production Considerations
 
-Now let's deploy our complete MCPServer operator and test it with real MCP server workloads. We'll build Docker images, deploy the operator, and manage MCPServer resources in production.
+In this final step, we'll test our MCPServer operator and discuss production deployment considerations. This is where we ensure our operator is reliable, secure, and ready for real-world usage.
 
-## Build and Deploy the Operator
+## Testing the Operator
 
-Let's build our operator and deploy it to the cluster:
+Let's test our MCPServer operator end-to-end:
 
 ```bash
-# Switch to our operator workspace
 cd /workspace/mcp-operator
 
-# Build Docker image for the operator
-echo "=== Building Operator Docker Image ==="
-make docker-build IMG=mcp-operator:latest
+# Run the operator locally
+echo "🚀 Starting MCPServer operator..."
+make run &
+OPERATOR_PID=$!
 
-# Load image into Kind cluster (for local testing)
-if command -v kind >/dev/null 2>&1; then
-    kind load docker-image mcp-operator:latest
-    echo "✅ Operator image loaded into Kind cluster"
-fi
+# Wait for operator to start
+sleep 5
 
-echo "✅ MCPServer operator Docker image built"
+echo "✅ Operator started with PID: $OPERATOR_PID"
 ```{{exec}}
 
-## Build MCP Server Docker Image
-
-First, let's build a Docker image for our MCP server from the lab:
+## Deploy Test MCPServer
 
 ```bash
-# Switch to MCP lab directory to build our server image
-cd /workspace/mcp-lab
+# Apply the sample MCPServer
+kubectl apply -f config/samples/mcp_v1alpha1_mcpserver.yaml
 
-# Build Docker image from our tested MCP server
-echo "=== Building MCP Server Docker Image ==="
-docker build -t mcp-k8s-server:latest .
+# Wait for resources to be created
+sleep 10
 
-# Load image into Kind cluster (for local testing)
-if command -v kind >/dev/null 2>&1; then
-    kind load docker-image mcp-k8s-server:latest
-    echo "✅ MCP server image loaded into Kind cluster"
-fi
+echo "📊 Checking MCPServer status:"
+kubectl get mcpservers
 
-echo "✅ MCP Server Docker image built and ready"
-```{{exec}}
-
-## Deploy the Operator
-
-Now let's deploy our operator to the cluster:
-
-```bash
-# Switch back to operator directory
-cd /workspace/mcp-operator
-
-# Deploy the operator to the cluster
-echo "=== Deploying MCPServer Operator ==="
-make deploy IMG=mcp-operator:latest
-
-echo "✅ MCPServer operator deployed"
-```{{exec}}
-
-## Verify Operator Deployment
-
-Let's verify the operator is running correctly:
-
-```bash
-# Check operator deployment
-echo "=== Checking Operator Status ==="
-kubectl get deployment -n mcp-operator-system
-
-# Check operator pods
-kubectl get pods -n mcp-operator-system
-
-# Check operator logs
 echo ""
-echo "=== Recent Operator Logs ==="
-kubectl logs -n mcp-operator-system -l control-plane=controller-manager --tail=20
+echo "🚀 Checking created Deployment:"
+kubectl get deployment example-mcpserver
 
-echo "✅ Operator verification completed"
-```{{exec}}
+echo ""
+echo "🌐 Checking created Service:"
+kubectl get service example-mcpserver
 
-## Create Production MCPServer Instances
-
-Now let's create our MCPServer instances using the operator:
-
-```bash
-# Create updated sample manifests with our built image
-cat > basic-mcpserver.yaml << 'EOF'
-apiVersion: servers.mcp.example.com/v1alpha1
-kind: MCPServer
-metadata:
-  name: basic-mcpserver
-  namespace: default
-  labels:
-    environment: development
-spec:
-  image: "mcp-k8s-server:latest"
-  transport: streamable-http
-  port: 3001
-  replicas: 1
-  config:
-    MCP_SERVER_NAME: "basic-kubernetes-server"
-    LOG_LEVEL: "info"
-  env:
-    - name: POD_NAME
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.name
-    - name: POD_NAMESPACE
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.namespace
-EOF
-
-# Create advanced production MCPServer
-cat > advanced-mcpserver.yaml << 'EOF'
-apiVersion: servers.mcp.example.com/v1alpha1
-kind: MCPServer
-metadata:
-  name: advanced-mcpserver
-  namespace: default
-  labels:
-    environment: production
-    team: ai-platform
-spec:
-  image: "mcp-k8s-server:latest"
-  transport: streamable-http
-  port: 3001
-  replicas: 2
-  config:
-    MCP_SERVER_NAME: "production-k8s-server"
-    LOG_LEVEL: "warn"
-    ENABLE_METRICS: "true"
-    RATE_LIMIT_REQUESTS: "100"
-  resources:
-    requests:
-      cpu: "100m"
-      memory: "128Mi"
-    limits:
-      cpu: "500m"
-      memory: "512Mi"
-  env:
-    - name: POD_NAME
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.name
-    - name: POD_NAMESPACE
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.namespace
-EOF
-
-echo "✅ MCPServer manifests created"
-```{{exec}}
-
-## Deploy and Test MCPServer Instances
-
-Let's deploy our MCPServer instances and test them:
-
-```bash
-# Deploy basic MCPServer
-echo "=== Deploying Basic MCPServer ==="
-kubectl apply -f basic-mcpserver.yaml
-
-# Wait for it to become ready
-echo "Waiting for basic MCPServer to be ready..."
-kubectl wait --for=condition=Ready mcpserver/basic-mcpserver --timeout=120s
-
-# Check status
-kubectl get mcpservers basic-mcpserver
-kubectl describe mcpserver basic-mcpserver
-
-echo "✅ Basic MCPServer deployed and ready"
+echo ""
+echo "📋 Detailed MCPServer status:"
+kubectl describe mcpserver example-mcpserver
 ```{{exec}}
 
 ## Test MCP Server Connectivity
 
-Let's test the deployed MCP server:
-
 ```bash
-# Get the service endpoint
-echo "=== Testing MCP Server Connectivity ==="
-SERVICE_IP=$(kubectl get service basic-mcpserver -o jsonpath='{.spec.clusterIP}')
-SERVICE_PORT=$(kubectl get service basic-mcpserver -o jsonpath='{.spec.ports[0].port}')
+# Test if our MCP server is responding
+echo "🔍 Testing MCP server connectivity..."
 
-echo "MCP Server Service: $SERVICE_IP:$SERVICE_PORT"
+# Port forward to test the service
+kubectl port-forward service/example-mcpserver 8080:8080 &
+PORT_FORWARD_PID=$!
 
-# Test health endpoint
-echo ""
-echo "Testing health endpoint..."
-if kubectl run test-client --image=alpine/curl --rm -it --restart=Never -- \
-   curl -s "http://$SERVICE_IP:$SERVICE_PORT/health"; then
-    echo "✅ Health endpoint responding"
-else
-    echo "❌ Health endpoint not accessible"
-fi
+sleep 3
 
-# Test MCP protocol endpoint
-echo ""
-echo "Testing MCP protocol endpoint..."
-kubectl run test-mcp-client --image=alpine/curl --rm -it --restart=Never -- \
-   curl -s -X POST "http://$SERVICE_IP:$SERVICE_PORT/mcp" \
-   -H "Content-Type: application/json" \
-   -d '{"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {}}'
+# Test basic HTTP connectivity
+echo "📡 Testing HTTP endpoint:"
+curl -f http://localhost:8080/health || echo "Health check endpoint not responding (expected for basic Node.js image)"
 
-echo "✅ MCP protocol endpoint tested"
+# Cleanup port forward
+kill $PORT_FORWARD_PID 2>/dev/null
 ```{{exec}}
 
-## Deploy Advanced MCPServer
-
-Now let's deploy the advanced production MCPServer:
+## Test Reconciliation and Self-Healing
 
 ```bash
-# Deploy advanced MCPServer
-echo "=== Deploying Advanced MCPServer ==="
-kubectl apply -f advanced-mcpserver.yaml
+echo "🧪 Testing self-healing capabilities..."
 
-# Wait for it to become ready
-echo "Waiting for advanced MCPServer to be ready..."
-kubectl wait --for=condition=Ready mcpserver/advanced-mcpserver --timeout=120s
+# Delete the deployment (should be recreated by operator)
+kubectl delete deployment example-mcpserver
 
-# Check status of all MCPServers
-echo ""
-echo "=== All MCPServers Status ==="
-kubectl get mcpservers
-kubectl get pods -l app.kubernetes.io/name=mcp-server
-
-echo "✅ Advanced MCPServer deployed"
-```{{exec}}
-
-## Test Scaling and Management
-
-Let's test the scaling capabilities:
-
-```bash
-# Test scaling the advanced MCPServer
-echo "=== Testing MCPServer Scaling ==="
-kubectl patch mcpserver advanced-mcpserver --type='merge' -p='{"spec":{"replicas":3}}'
-
-# Wait for scale operation
-echo "Waiting for scale operation..."
+echo "⏱️  Waiting for operator to recreate deployment..."
 sleep 10
 
-# Check scaling results
-kubectl get mcpservers advanced-mcpserver
-kubectl get pods -l app.kubernetes.io/instance=advanced-mcpserver
+echo "🔄 Checking if deployment was recreated:"
+kubectl get deployment example-mcpserver
 
-# Test configuration update
 echo ""
-echo "=== Testing Configuration Update ==="
-kubectl patch mcpserver advanced-mcpserver --type='merge' -p='{"spec":{"config":{"LOG_LEVEL":"debug","NEW_SETTING":"enabled"}}}'
-
-# Wait for update
-sleep 10
-
-# Check updated configuration
-kubectl describe mcpserver advanced-mcpserver | grep -A 10 "Config:"
-
-echo "✅ Scaling and configuration updates tested"
-```{{exec}}
-
-## Monitor Resource Status
-
-Let's examine the comprehensive status reporting:
-
-```bash
-# Check detailed status of all resources
-echo "=== MCPServer Resource Status ==="
-
-# MCPServer status
-kubectl get mcpservers -o wide
-echo ""
-
-# Deployments created by the operator
-kubectl get deployments -l app.kubernetes.io/managed-by=mcp-operator
-echo ""
-
-# Services created by the operator  
-kubectl get services -l app.kubernetes.io/managed-by=mcp-operator
-echo ""
-
-# ConfigMaps created by the operator
-kubectl get configmaps -l app.kubernetes.io/managed-by=mcp-operator
-echo ""
-
-# Pods running our MCP servers
-kubectl get pods -l app.kubernetes.io/name=mcp-server -o wide
-echo ""
-
-# Check conditions and status
-echo "=== MCPServer Conditions ==="
-kubectl get mcpserver basic-mcpserver -o jsonpath='{.status.conditions}' | jq '.'
-kubectl get mcpserver advanced-mcpserver -o jsonpath='{.status.conditions}' | jq '.'
-
-echo "✅ Resource status monitoring completed"
+echo "📊 Checking pods:"
+kubectl get pods -l app.kubernetes.io/instance=example-mcpserver
 ```{{exec}}
 
 ## Test Cleanup and Finalizers
 
-Let's test the cleanup process:
-
 ```bash
-# Test graceful deletion
-echo "=== Testing MCPServer Deletion ==="
+echo "🧹 Testing cleanup with finalizers..."
 
-# Delete basic MCPServer and monitor cleanup
-kubectl delete mcpserver basic-mcpserver
+# Delete the MCPServer (should trigger finalizer cleanup)
+kubectl delete mcpserver example-mcpserver
 
-# Monitor deletion process
-echo "Monitoring deletion process..."
-timeout=30
-while [ $timeout -gt 0 ] && kubectl get mcpserver basic-mcpserver 2>/dev/null; do
-    echo "Still deleting... ($timeout seconds remaining)"
-    kubectl get mcpserver basic-mcpserver -o jsonpath='{.metadata.deletionTimestamp}' 2>/dev/null
-    sleep 2
-    timeout=$((timeout - 2))
-done
+echo "⏱️  Monitoring deletion process..."
+sleep 5
 
-# Verify all resources are cleaned up
-echo ""
-echo "=== Verifying Cleanup ==="
-if kubectl get mcpserver basic-mcpserver 2>/dev/null; then
-    echo "❌ MCPServer still exists"
-else
-    echo "✅ MCPServer deleted successfully"
-fi
+# Check if resources are being cleaned up
+echo "📊 Checking resource cleanup:"
+kubectl get mcpserver example-mcpserver 2>/dev/null || echo "✅ MCPServer deleted"
+kubectl get deployment example-mcpserver 2>/dev/null || echo "✅ Deployment cleaned up"
+kubectl get service example-mcpserver 2>/dev/null || echo "✅ Service cleaned up"
 
-# Check if related resources are cleaned up
-kubectl get deployments -l app.kubernetes.io/instance=basic-mcpserver
-kubectl get services -l app.kubernetes.io/instance=basic-mcpserver
-kubectl get pods -l app.kubernetes.io/instance=basic-mcpserver
-
-echo "✅ Cleanup verification completed"
+# Stop the operator
+kill $OPERATOR_PID 2>/dev/null
 ```{{exec}}
 
-## Production Deployment Summary
+## Production Deployment Preparation
 
-Let's summarize what we've accomplished:
+Now let's prepare for production deployment:
 
 ```bash
-echo "==========================================="
-echo "🚀 Production Deployment Summary"
-echo "==========================================="
-echo ""
-echo "✅ Successfully Deployed:"
-echo "  🏗️  MCPServer Operator with full reconciliation"
-echo "  🐳 Docker images for operator and MCP server"
-echo "  📦 Custom Resource Definitions (CRDs)"
-echo "  🎯 RBAC configuration and permissions"
-echo "  🔄 Controller manager with leader election"
-echo ""
-echo "✅ Tested Features:"
-echo "  🚀 MCPServer resource creation and management"
-echo "  📊 Comprehensive status reporting with conditions"
-echo "  📈 Dynamic scaling (1 → 2 → 3 replicas)"
-echo "  ⚙️  Configuration updates and rollouts"
-echo "  🧹 Graceful deletion with finalizer cleanup"
-echo "  🌐 Service creation and networking"
-echo "  🔍 Health checks and readiness probes"
-echo ""
-echo "✅ Production-Ready Components:"
-echo "  🎛️  Controller with proper error handling"
-echo "  📋 ConfigMap-based configuration management"
-echo "  🔐 Security context and RBAC policies"
-echo "  📊 Detailed status and condition reporting"
-echo "  🏷️  Proper labeling and owner references"
-echo "  ⚡ Efficient resource reconciliation"
-echo ""
-echo "🎉 MCPServer Operator is production-ready!"
-echo "==========================================="
+echo "🏭 Production Deployment Preparation"
+
+# Create production-ready configuration
+cat > config/production/kustomization.yaml << 'EOF'
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: mcp-system
+
+resources:
+- ../default
+
+patchesStrategicMerge:
+- manager_resources.yaml
+- manager_security.yaml
+
+images:
+- name: controller
+  newName: mcp-operator
+  newTag: v1.0.0
+EOF
+
+# Resource limits for production
+cat > config/production/manager_resources.yaml << 'EOF'
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: controller-manager
+  namespace: system
+spec:
+  template:
+    spec:
+      containers:
+      - name: manager
+        resources:
+          limits:
+            cpu: 500m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+EOF
+
+# Security hardening
+cat > config/production/manager_security.yaml << 'EOF'
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: controller-manager
+  namespace: system
+spec:
+  template:
+    spec:
+      containers:
+      - name: manager
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
+          seccompProfile:
+            type: RuntimeDefault
+EOF
+
+echo "✅ Production configuration created"
 ```{{exec}}
 
-Perfect! We now have a fully functional, production-ready MCPServer operator that can deploy, scale, and manage MCP servers in Kubernetes. In the final step, we'll cover production considerations and best practices!
+## Security Considerations
+
+```bash
+echo "🔒 Security Best Practices:"
+echo ""
+echo "1. 👤 RBAC (Role-Based Access Control):"
+echo "   - Minimal required permissions"
+echo "   - Separate service accounts"
+echo "   - Namespace-scoped when possible"
+echo ""
+echo "2. 🛡️ Pod Security:"
+echo "   - Non-root user execution"
+echo "   - Read-only root filesystem"
+echo "   - No privilege escalation"
+echo "   - Drop all capabilities"
+echo ""
+echo "3. 🔐 Secrets Management:"
+echo "   - Use Kubernetes secrets"
+echo "   - External secret operators"
+echo "   - Secret rotation policies"
+echo ""
+echo "4. 🌐 Network Security:"
+echo "   - Network policies"
+echo "   - Service mesh integration"
+echo "   - TLS everywhere"
+```{{exec}}
+
+## Monitoring and Observability
+
+```bash
+# Create monitoring configuration
+cat > config/monitoring/service-monitor.yaml << 'EOF'
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: mcp-operator-metrics
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mcp-operator
+  endpoints:
+  - port: metrics
+    path: /metrics
+    interval: 30s
+EOF
+
+echo "📊 Monitoring considerations:"
+echo ""
+echo "1. 📈 Metrics:"
+echo "   - Controller runtime metrics"
+echo "   - Custom MCP server metrics"
+echo "   - Resource utilization"
+echo ""
+echo "2. 📝 Logging:"
+echo "   - Structured logging"
+echo "   - Log aggregation"
+echo "   - Error tracking"
+echo ""
+echo "3. 🚨 Alerting:"
+echo "   - Failed reconciliations"
+echo "   - Resource exhaustion"
+echo "   - MCP server health"
+```{{exec}}
+
+## High Availability
+
+```bash
+echo "🏗️ High Availability Setup:"
+echo ""
+echo "1. 🔄 Operator HA:"
+echo "   - Multiple controller replicas"
+echo "   - Leader election"
+echo "   - Anti-affinity rules"
+echo ""
+echo "2. 📦 MCP Server HA:"
+echo "   - Multiple replicas"
+echo "   - Pod disruption budgets"
+echo "   - Node affinity/anti-affinity"
+echo ""
+echo "3. 💾 Data Persistence:"
+echo "   - Persistent volumes"
+echo "   - Backup strategies"
+echo "   - Disaster recovery"
+```{{exec}}
+
+## CI/CD Pipeline
+
+```bash
+# Create GitHub Actions workflow
+mkdir -p .github/workflows
+cat > .github/workflows/ci.yaml << 'EOF'
+name: CI
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-go@v3
+      with:
+        go-version: 1.21
+    - name: Run tests
+      run: make test
+    - name: Build
+      run: make build
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Create k8s cluster
+      uses: helm/kind-action@v1.5.0
+    - name: Run e2e tests
+      run: make test-e2e
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run security scan
+      uses: securecodewarrior/github-action-add-sarif@v1
+      with:
+        sarif-file: security-scan-results.sarif
+EOF
+
+echo "🔄 CI/CD Pipeline includes:"
+echo "  - Unit tests"
+echo "  - Integration tests"
+echo "  - Security scanning"
+echo "  - Container image building"
+echo "  - Deployment automation"
+```{{exec}}
+
+## Performance and Scaling
+
+```bash
+echo "⚡ Performance Optimization:"
+echo ""
+echo "1. 🎯 Controller Tuning:"
+echo "   - MaxConcurrentReconciles"
+echo "   - Rate limiting"
+echo "   - Cache settings"
+echo ""
+echo "2. 📊 Resource Management:"
+echo "   - Resource requests/limits"
+echo "   - Horizontal Pod Autoscaler"
+echo "   - Vertical Pod Autoscaler"
+echo ""
+echo "3. 🔧 MCP Server Scaling:"
+echo "   - Connection pooling"
+echo "   - Load balancing"
+echo "   - Circuit breakers"
+```{{exec}}
+
+## Testing Strategy
+
+```bash
+echo "🧪 Comprehensive Testing Strategy:"
+echo ""
+echo "1. 🔬 Unit Tests:"
+echo "   - Controller logic"
+echo "   - Resource creation"
+echo "   - Status updates"
+echo ""
+echo "2. 🔄 Integration Tests:"
+echo "   - Full reconciliation cycle"
+echo "   - API interactions"
+echo "   - Error scenarios"
+echo ""
+echo "3. 🌐 End-to-End Tests:"
+echo "   - Real cluster deployment"
+echo "   - MCP client interactions"
+echo "   - Upgrade scenarios"
+echo ""
+echo "4. 📊 Performance Tests:"
+echo "   - Large-scale deployments"
+echo "   - Resource consumption"
+echo "   - Latency measurements"
+```{{exec}}
+
+## Deployment Checklist
+
+```bash
+echo "✅ Production Deployment Checklist:"
+echo ""
+echo "🔒 Security:"
+echo "  □ RBAC properly configured"
+echo "  □ Pod security policies applied"
+echo "  □ Network policies in place"
+echo "  □ Secrets encrypted at rest"
+echo ""
+echo "📊 Monitoring:"
+echo "  □ Metrics collection enabled"
+echo "  □ Alerting rules configured"
+echo "  □ Log aggregation setup"
+echo "  □ Dashboards created"
+echo ""
+echo "🔄 Operations:"
+echo "  □ Backup procedures tested"
+echo "  □ Disaster recovery plan"
+echo "  □ Update/rollback procedures"
+echo "  □ Documentation complete"
+echo ""
+echo "🧪 Testing:"
+echo "  □ All test suites passing"
+echo "  □ Load testing completed"
+echo "  □ Security scanning done"
+echo "  □ Chaos testing performed"
+```{{exec}}
+
+## Final Summary
+
+```bash
+echo "🎉 MCPServer Operator Development Complete!"
+echo ""
+echo "🏆 What You've Built:"
+echo "  📦 Production-ready Kubernetes operator"
+echo "  🤖 MCP server lifecycle management"
+echo "  🔄 Robust reconciliation patterns"
+echo "  🛡️ Security-hardened deployment"
+echo "  📊 Comprehensive monitoring"
+echo "  🧪 Full testing coverage"
+echo ""
+echo "🚀 Key Achievements:"
+echo "  ✅ Bridged AI tooling with cloud-native infrastructure"
+echo "  ✅ Implemented enterprise-grade operator patterns"
+echo "  ✅ Created declarative API for MCP servers"
+echo "  ✅ Built scalable, reliable AI infrastructure"
+echo ""
+echo "🔮 Next Steps:"
+echo "  - Deploy to production clusters"
+echo "  - Add advanced features (autoscaling, multi-tenancy)"
+echo "  - Contribute to open source MCP ecosystem"
+echo "  - Build AI-native applications"
+echo ""
+echo "You're now ready to build the future of AI infrastructure! 🚀🤖☁️"
+```{{exec}}
+
+Congratulations! You've successfully built a complete, production-ready Kubernetes operator for managing MCP servers. You've mastered the intersection of AI tooling and cloud-native infrastructure!

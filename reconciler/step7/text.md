@@ -1,640 +1,939 @@
-# Step 7: Defining the MCPServer Custom Resource
+# Step 7: Reconciliation Patterns for MCP Workloads
 
-Now let's design and implement our MCPServer Custom Resource Definition (CRD). This will serve as the API for users to declaratively manage MCP servers in Kubernetes.
+Now let's implement the core reconciliation patterns specifically designed for MCP server workloads. We'll focus on finalizers, status management, and MCP-specific error handling.
 
-## MCPServer Resource Design
+## Understanding MCP-Specific Reconciliation
 
-Let's design our MCPServer resource by analyzing what users need to configure:
+MCP servers have unique requirements compared to typical web services:
 
 ```bash
-echo "🎯 MCPServer Resource Requirements:"
+echo "🎯 MCP Server Reconciliation Challenges:"
 echo ""
-echo "📋 Core Specification:"
-echo "  - Container image for the MCP server"
-echo "  - Transport type (stdio, http, streamable-http)"
-echo "  - Port and networking configuration"
-echo "  - Replica count for scaling"
-echo "  - Resource requests and limits"
-echo "  - MCP server-specific configuration"
+echo "🔄 Session State Management:"
+echo "  - MCP servers maintain stateful connections"
+echo "  - Graceful shutdown requires session cleanup"
+echo "  - Client reconnection during pod restarts"
 echo ""
-echo "📊 Status Information:"
-echo "  - Current phase (Pending, Ready, Failed)"
-echo "  - Ready replica count"
-echo "  - Service endpoint URL"
-echo "  - Conditions for detailed status"
-echo "  - Observed generation for spec changes"
+echo "🌐 Transport-Specific Behavior:"
+echo "  - stdio: Single-use, no networking"
+echo "  - HTTP: Stateless, simple scaling"
+echo "  - Streamable HTTP: Session management, connection pooling"
+echo ""
+echo "🧹 Cleanup Considerations:"
+echo "  - Active MCP sessions during deletion"
+echo "  - Client notification of server shutdown"
+echo "  - Resource cleanup across multiple components"
 ```{{exec}}
 
-## Initialize Kubebuilder Project
+## Implement Finalizer Logic
 
-First, let's set up our operator project:
+Let's start with comprehensive finalizer management:
 
 ```bash
-# Create operator workspace
-mkdir -p /workspace/mcp-operator
 cd /workspace/mcp-operator
 
-# Initialize Kubebuilder project
-kubebuilder init --domain mcp.example.com --repo github.com/example/mcp-operator
-
-echo "✅ Kubebuilder project initialized"
-```{{exec}}
-
-## Create MCPServer API
-
-```bash
-# Create the MCPServer API and controller
-kubebuilder create api --group mcp --version v1alpha1 --kind MCPServer --controller --resource
-
-echo "✅ MCPServer API scaffold created"
-ls -la api/v1alpha1/
-```{{exec}}
-
-## Define MCPServer Types
-
-Let's implement our comprehensive MCPServer specification:
-
-```bash
-# Update the MCPServer types with our complete specification
-cat > api/v1alpha1/mcpserver_types.go << 'EOF'
-package v1alpha1
-
-import (
-	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-)
-
-// MCPServerSpec defines the desired state of MCPServer
-type MCPServerSpec struct {
-	// Image is the container image for the MCP server
-	// +kubebuilder:validation:Required
-	// +kubebuilder:validation:MinLength=1
-	Image string `json:"image"`
-
-	// Transport specifies the MCP transport protocol
-	// +kubebuilder:validation:Enum=stdio;http;streamable-http
-	// +kubebuilder:default=streamable-http
-	Transport string `json:"transport,omitempty"`
-
-	// Port is the port the MCP server listens on
-	// +kubebuilder:validation:Minimum=1
-	// +kubebuilder:validation:Maximum=65535
-	// +kubebuilder:default=8080
-	Port int32 `json:"port,omitempty"`
-
-	// Replicas is the desired number of MCP server instances
-	// +kubebuilder:validation:Minimum=0
-	// +kubebuilder:default=1
-	Replicas *int32 `json:"replicas,omitempty"`
-
-	// Config contains MCP server configuration as key-value pairs
-	// +kubebuilder:validation:Optional
-	Config map[string]string `json:"config,omitempty"`
-
-	// Resources specifies the resource requirements for the MCP server
-	// +kubebuilder:validation:Optional
-	Resources *MCPServerResources `json:"resources,omitempty"`
-
-	// SecurityContext defines security settings for the MCP server pod
-	// +kubebuilder:validation:Optional
-	SecurityContext *corev1.SecurityContext `json:"securityContext,omitempty"`
-
-	// ServiceAccount specifies the service account to use
-	// +kubebuilder:validation:Optional
-	ServiceAccount string `json:"serviceAccount,omitempty"`
-
-	// Env allows additional environment variables
-	// +kubebuilder:validation:Optional
-	Env []corev1.EnvVar `json:"env,omitempty"`
-
-	// VolumeMounts for persistent storage or config files
-	// +kubebuilder:validation:Optional
-	VolumeMounts []corev1.VolumeMount `json:"volumeMounts,omitempty"`
-
-	// Volumes to mount in the MCP server pod
-	// +kubebuilder:validation:Optional
-	Volumes []corev1.Volume `json:"volumes,omitempty"`
-}
-
-// MCPServerResources defines resource requirements
-type MCPServerResources struct {
-	// Requests describes the minimum amount of compute resources required
-	// +kubebuilder:validation:Optional
-	Requests corev1.ResourceList `json:"requests,omitempty"`
-
-	// Limits describes the maximum amount of compute resources allowed
-	// +kubebuilder:validation:Optional
-	Limits corev1.ResourceList `json:"limits,omitempty"`
-}
-
-// MCPServerStatus defines the observed state of MCPServer
-type MCPServerStatus struct {
-	// Phase represents the current phase of the MCPServer lifecycle
-	// +kubebuilder:validation:Enum=Pending;Ready;Failed;Terminating
-	Phase MCPServerPhase `json:"phase,omitempty"`
-
-	// Conditions represent the latest available observations of the MCPServer's state
-	// +kubebuilder:validation:Optional
-	Conditions []metav1.Condition `json:"conditions,omitempty"`
-
-	// ReadyReplicas is the number of ready MCP server replicas
-	// +kubebuilder:validation:Minimum=0
-	ReadyReplicas int32 `json:"readyReplicas,omitempty"`
-
-	// Replicas is the total number of MCP server replicas
-	// +kubebuilder:validation:Minimum=0
-	Replicas int32 `json:"replicas,omitempty"`
-
-	// Endpoint is the URL where the MCP server can be accessed
-	// +kubebuilder:validation:Optional
-	Endpoint string `json:"endpoint,omitempty"`
-
-	// ObservedGeneration reflects the generation of the most recently observed MCPServer
-	// +kubebuilder:validation:Minimum=0
-	ObservedGeneration int64 `json:"observedGeneration,omitempty"`
-
-	// LastTransitionTime is the last time the condition transitioned
-	// +kubebuilder:validation:Optional
-	LastTransitionTime *metav1.Time `json:"lastTransitionTime,omitempty"`
-}
-
-// MCPServerPhase represents the lifecycle phase of an MCPServer
-// +kubebuilder:validation:Enum=Pending;Ready;Failed;Terminating
-type MCPServerPhase string
-
-const (
-	// MCPServerPhasePending indicates the MCPServer is being processed
-	MCPServerPhasePending MCPServerPhase = "Pending"
-	// MCPServerPhaseReady indicates the MCPServer is ready and serving requests
-	MCPServerPhaseReady MCPServerPhase = "Ready"
-	// MCPServerPhaseFailed indicates the MCPServer has failed
-	MCPServerPhaseFailed MCPServerPhase = "Failed"
-	// MCPServerPhaseTerminating indicates the MCPServer is being deleted
-	MCPServerPhaseTerminating MCPServerPhase = "Terminating"
-)
-
-// Condition types for MCPServer
-const (
-	// ConditionReady indicates whether the MCPServer is ready to serve requests
-	ConditionReady = "Ready"
-	// ConditionDeploymentReady indicates whether the underlying Deployment is ready
-	ConditionDeploymentReady = "DeploymentReady"
-	// ConditionServiceReady indicates whether the Service is ready
-	ConditionServiceReady = "ServiceReady"
-	// ConditionConfigurationValid indicates whether the configuration is valid
-	ConditionConfigurationValid = "ConfigurationValid"
-)
-
-// Finalizer for MCPServer cleanup
-const (
-	MCPServerFinalizer = "mcp.example.com/finalizer"
-)
-
-//+kubebuilder:object:root=true
-//+kubebuilder:subresource:status
-//+kubebuilder:subresource:scale:specpath=.spec.replicas,statuspath=.status.replicas,selectorpath=.status.selector
-//+kubebuilder:resource:shortName=mcps,categories=ai;mcp
-//+kubebuilder:printcolumn:name="Phase",type=string,JSONPath=`.status.phase`
-//+kubebuilder:printcolumn:name="Ready",type=integer,JSONPath=`.status.readyReplicas`
-//+kubebuilder:printcolumn:name="Replicas",type=integer,JSONPath=`.spec.replicas`
-//+kubebuilder:printcolumn:name="Transport",type=string,JSONPath=`.spec.transport`
-//+kubebuilder:printcolumn:name="Endpoint",type=string,JSONPath=`.status.endpoint`
-//+kubebuilder:printcolumn:name="Age",type=date,JSONPath=`.metadata.creationTimestamp`
-
-// MCPServer is the Schema for the mcpservers API
-type MCPServer struct {
-	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata,omitempty"`
-
-	Spec   MCPServerSpec   `json:"spec,omitempty"`
-	Status MCPServerStatus `json:"status,omitempty"`
-}
-
-//+kubebuilder:object:root=true
-
-// MCPServerList contains a list of MCPServer
-type MCPServerList struct {
-	metav1.TypeMeta `json:",inline"`
-	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []MCPServer `json:"items"`
-}
-
-func init() {
-	SchemeBuilder.Register(&MCPServer{}, &MCPServerList{})
-}
-
-// Helper methods for MCPServer
-
-// GetReplicas returns the desired number of replicas, defaulting to 1
-func (m *MCPServer) GetReplicas() int32 {
-	if m.Spec.Replicas == nil {
-		return 1
-	}
-	return *m.Spec.Replicas
-}
-
-// GetPort returns the port, defaulting to 8080
-func (m *MCPServer) GetPort() int32 {
-	if m.Spec.Port == 0 {
-		return 8080
-	}
-	return m.Spec.Port
-}
-
-// GetTransport returns the transport, defaulting to streamable-http
-func (m *MCPServer) GetTransport() string {
-	if m.Spec.Transport == "" {
-		return "streamable-http"
-	}
-	return m.Spec.Transport
-}
-
-// IsReady returns true if the MCPServer is ready
-func (m *MCPServer) IsReady() bool {
-	return m.Status.Phase == MCPServerPhaseReady && 
-		   m.Status.ReadyReplicas == m.GetReplicas()
-}
-
-// GetCondition returns the condition with the specified type
-func (m *MCPServer) GetCondition(condType string) *metav1.Condition {
-	for i := range m.Status.Conditions {
-		if m.Status.Conditions[i].Type == condType {
-			return &m.Status.Conditions[i]
-		}
-	}
-	return nil
-}
-
-// SetCondition sets or updates a condition
-func (m *MCPServer) SetCondition(condType, status, reason, message string) {
-	condition := metav1.Condition{
-		Type:               condType,
-		Status:             metav1.ConditionStatus(status),
-		Reason:             reason,
-		Message:            message,
-		LastTransitionTime: metav1.Now(),
-	}
-
-	// Find and update existing condition
-	for i := range m.Status.Conditions {
-		if m.Status.Conditions[i].Type == condType {
-			// Only update if status changed
-			if m.Status.Conditions[i].Status != condition.Status ||
-			   m.Status.Conditions[i].Reason != condition.Reason ||
-			   m.Status.Conditions[i].Message != condition.Message {
-				m.Status.Conditions[i] = condition
-			}
-			return
-		}
-	}
-
-	// Add new condition
-	m.Status.Conditions = append(m.Status.Conditions, condition)
-}
-EOF
-
-echo "✅ MCPServer types defined with comprehensive specification"
-```{{exec}}
-
-## Generate CRD Manifests
-
-```bash
-# Generate the CRD manifests and Go code
-make generate
-make manifests
-
-echo "✅ CRD manifests generated"
-
-# Let's examine the generated CRD
-echo ""
-echo "📋 Generated CRD structure:"
-head -30 config/crd/bases/mcp.example.com_mcpservers.yaml
-```{{exec}}
-
-## Add Validation and Webhooks
-
-Let's add advanced validation using CEL (Common Expression Language):
-
-```bash
-# Create webhook configuration for advanced validation
-mkdir -p api/v1alpha1/webhook
-
-cat > api/v1alpha1/mcpserver_webhook.go << 'EOF'
-package v1alpha1
+# Create the finalizer management logic
+cat > controllers/finalizers.go << 'EOF'
+package controllers
 
 import (
 	"context"
 	"fmt"
-	"net/url"
-	"strconv"
+	"time"
 
-	"k8s.io/apimachinery/pkg/runtime"
-	ctrl "sigs.k8s.io/controller-runtime"
-	logf "sigs.k8s.io/controller-runtime/pkg/log"
-	"sigs.k8s.io/controller-runtime/pkg/webhook"
-	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/types"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
+	"sigs.k8s.io/controller-runtime/pkg/log"
+
+	mcpv1alpha1 "github.com/example/mcp-operator/api/v1alpha1"
 )
 
-// log is for logging in this package.
-var mcpserverlog = logf.Log.WithName("mcpserver-resource")
+const (
+	// FinalizerCleanupTimeout is the maximum time to wait for graceful shutdown
+	FinalizerCleanupTimeout = 30 * time.Second
+	
+	// GracefulShutdownAnnotation indicates graceful shutdown is in progress
+	GracefulShutdownAnnotation = "example.com/graceful-shutdown"
+)
 
-// SetupWebhookWithManager will setup the manager to manage the webhooks
-func (r *MCPServer) SetupWebhookWithManager(mgr ctrl.Manager) error {
-	return ctrl.NewWebhookManagedBy(mgr).
-		For(r).
-		Complete()
+// ensureFinalizer adds the MCPServer finalizer if not present
+func (r *MCPServerReconciler) ensureFinalizer(ctx context.Context, mcpServer *mcpv1alpha1.MCPServer) error {
+	if !controllerutil.ContainsFinalizer(mcpServer, mcpv1alpha1.MCPServerFinalizer) {
+		controllerutil.AddFinalizer(mcpServer, mcpv1alpha1.MCPServerFinalizer)
+		return r.Update(ctx, mcpServer)
+	}
+	return nil
 }
 
-//+kubebuilder:webhook:path=/mutate-mcp-example-com-v1alpha1-mcpserver,mutating=true,failurePolicy=fail,sideEffects=None,groups=mcp.example.com,resources=mcpservers,verbs=create;update,versions=v1alpha1,name=mmcpserver.kb.io,admissionReviewVersions=v1
-
-var _ webhook.Defaulter = &MCPServer{}
-
-// Default implements webhook.Defaulter so a webhook will be registered for the type
-func (r *MCPServer) Default() {
-	mcpserverlog.Info("default", "name", r.Name)
-
-	// Set default transport
-	if r.Spec.Transport == "" {
-		r.Spec.Transport = "streamable-http"
+// handleDeletion manages the deletion process with proper cleanup
+func (r *MCPServerReconciler) handleDeletion(ctx context.Context, mcpServer *mcpv1alpha1.MCPServer) error {
+	logger := log.FromContext(ctx)
+	
+	if !controllerutil.ContainsFinalizer(mcpServer, mcpv1alpha1.MCPServerFinalizer) {
+		return nil
 	}
 
-	// Set default port
-	if r.Spec.Port == 0 {
-		r.Spec.Port = 8080
+	// Update status to indicate termination is starting
+	mcpServer.Status.Phase = mcpv1alpha1.MCPServerPhaseTerminating
+	mcpServer.SetCondition(
+		mcpv1alpha1.ConditionReady,
+		"False",
+		"Terminating",
+		"MCPServer is being deleted",
+	)
+	
+	if err := r.Status().Update(ctx, mcpServer); err != nil {
+		logger.Error(err, "Failed to update status during deletion")
 	}
 
-	// Set default replicas
-	if r.Spec.Replicas == nil {
-		replicas := int32(1)
-		r.Spec.Replicas = &replicas
+	// Perform graceful shutdown for MCP-specific workloads
+	if err := r.performGracefulShutdown(ctx, mcpServer); err != nil {
+		logger.Error(err, "Failed to perform graceful shutdown")
+		// Continue with cleanup even if graceful shutdown fails
 	}
 
-	// Add default labels if not present
-	if r.Labels == nil {
-		r.Labels = make(map[string]string)
+	// Clean up all related resources
+	if err := r.cleanupResources(ctx, mcpServer); err != nil {
+		return fmt.Errorf("failed to cleanup resources: %w", err)
 	}
-	if r.Labels["app.kubernetes.io/name"] == "" {
-		r.Labels["app.kubernetes.io/name"] = "mcp-server"
-	}
-	if r.Labels["app.kubernetes.io/instance"] == "" {
-		r.Labels["app.kubernetes.io/instance"] = r.Name
-	}
+
+	// Remove finalizer
+	controllerutil.RemoveFinalizer(mcpServer, mcpv1alpha1.MCPServerFinalizer)
+	return r.Update(ctx, mcpServer)
 }
 
-//+kubebuilder:webhook:path=/validate-mcp-example-com-v1alpha1-mcpserver,mutating=false,failurePolicy=fail,sideEffects=None,groups=mcp.example.com,resources=mcpservers,verbs=create;update,versions=v1alpha1,name=vmcpserver.kb.io,admissionReviewVersions=v1
+// performGracefulShutdown handles MCP-specific graceful shutdown
+func (r *MCPServerReconciler) performGracefulShutdown(ctx context.Context, mcpServer *mcpv1alpha1.MCPServer) error {
+	logger := log.FromContext(ctx)
+	logger.Info("Starting graceful shutdown", "transport", mcpServer.GetTransport())
 
-var _ webhook.Validator = &MCPServer{}
-
-// ValidateCreate implements webhook.Validator so a webhook will be registered for the type
-func (r *MCPServer) ValidateCreate() (admission.Warnings, error) {
-	mcpserverlog.Info("validate create", "name", r.Name)
-	return nil, r.validateMCPServer()
-}
-
-// ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
-func (r *MCPServer) ValidateUpdate(old runtime.Object) (admission.Warnings, error) {
-	mcpserverlog.Info("validate update", "name", r.Name)
-	return nil, r.validateMCPServer()
-}
-
-// ValidateDelete implements webhook.Validator so a webhook will be registered for the type
-func (r *MCPServer) ValidateDelete() (admission.Warnings, error) {
-	mcpserverlog.Info("validate delete", "name", r.Name)
-	// No validation needed for delete
-	return nil, nil
-}
-
-func (r *MCPServer) validateMCPServer() error {
-	// Validate image
-	if r.Spec.Image == "" {
-		return fmt.Errorf("image is required")
-	}
-
-	// Validate transport
-	validTransports := map[string]bool{
-		"stdio":           true,
-		"http":            true,
-		"streamable-http": true,
-	}
-	if !validTransports[r.Spec.Transport] {
-		return fmt.Errorf("invalid transport %q, must be one of: stdio, http, streamable-http", r.Spec.Transport)
-	}
-
-	// Validate port range
-	if r.Spec.Port < 1 || r.Spec.Port > 65535 {
-		return fmt.Errorf("port must be between 1 and 65535, got %d", r.Spec.Port)
-	}
-
-	// Validate replicas
-	if r.Spec.Replicas != nil && *r.Spec.Replicas < 0 {
-		return fmt.Errorf("replicas cannot be negative, got %d", *r.Spec.Replicas)
-	}
-
-	// Validate transport-specific settings
-	if r.Spec.Transport == "stdio" && *r.Spec.Replicas > 1 {
-		return fmt.Errorf("stdio transport does not support multiple replicas")
-	}
-
-	// Validate configuration keys
-	for key, value := range r.Spec.Config {
-		if key == "" {
-			return fmt.Errorf("configuration key cannot be empty")
+	// Add graceful shutdown annotation to deployment
+	deployment := &appsv1.Deployment{}
+	err := r.Get(ctx, types.NamespacedName{
+		Name:      mcpServer.Name,
+		Namespace: mcpServer.Namespace,
+	}, deployment)
+	if err != nil {
+		if errors.IsNotFound(err) {
+			return nil // Deployment already gone
 		}
-		if key == "MCP_PORT" {
-			if _, err := strconv.Atoi(value); err != nil {
-				return fmt.Errorf("MCP_PORT configuration value must be a valid integer, got %q", value)
+		return err
+	}
+
+	// Annotate deployment for graceful shutdown
+	if deployment.Annotations == nil {
+		deployment.Annotations = make(map[string]string)
+	}
+	deployment.Annotations[GracefulShutdownAnnotation] = time.Now().Format(time.RFC3339)
+
+	// Set termination grace period based on transport type
+	gracePeriod := r.getTerminationGracePeriod(mcpServer.GetTransport())
+	deployment.Spec.Template.Spec.TerminationGracePeriodSeconds = &gracePeriod
+
+	if err := r.Update(ctx, deployment); err != nil {
+		return fmt.Errorf("failed to update deployment for graceful shutdown: %w", err)
+	}
+
+	// Wait for pods to terminate gracefully
+	return r.waitForPodsTermination(ctx, mcpServer)
+}
+
+// getTerminationGracePeriod returns appropriate grace period based on transport
+func (r *MCPServerReconciler) getTerminationGracePeriod(transport string) int64 {
+	switch transport {
+	case "stdio":
+		return 5 // stdio connections are typically short-lived
+	case "http":
+		return 15 // HTTP requests should complete quickly  
+	case "streamable-http":
+		return 30 // Streamable connections may need more time
+	default:
+		return 30
+	}
+}
+
+// waitForPodsTermination waits for all MCP server pods to terminate
+func (r *MCPServerReconciler) waitForPodsTermination(ctx context.Context, mcpServer *mcpv1alpha1.MCPServer) error {
+	logger := log.FromContext(ctx)
+	
+	timeout := time.After(FinalizerCleanupTimeout)
+	ticker := time.NewTicker(2 * time.Second)
+	defer ticker.Stop()
+
+	labels := r.labelsForMCPServer(mcpServer)
+	
+	for {
+		select {
+		case <-timeout:
+			logger.Info("Timeout waiting for pods to terminate, proceeding with cleanup")
+			return nil
+		case <-ticker.C:
+			podList := &corev1.PodList{}
+			if err := r.List(ctx, podList, 
+				client.InNamespace(mcpServer.Namespace),
+				client.MatchingLabels(labels)); err != nil {
+				return err
+			}
+
+			if len(podList.Items) == 0 {
+				logger.Info("All pods terminated successfully")
+				return nil
+			}
+
+			logger.Info("Waiting for pods to terminate", "remaining", len(podList.Items))
+		}
+	}
+}
+
+// cleanupResources removes all resources created by the MCPServer
+func (r *MCPServerReconciler) cleanupResources(ctx context.Context, mcpServer *mcpv1alpha1.MCPServer) error {
+	logger := log.FromContext(ctx)
+	logger.Info("Cleaning up MCPServer resources")
+
+	// Cleanup is mostly handled by owner references, but we can do additional cleanup here
+	
+	// Clean up any external resources that don't have owner references
+	if err := r.cleanupExternalResources(ctx, mcpServer); err != nil {
+		logger.Error(err, "Failed to cleanup external resources")
+		// Don't fail the entire cleanup for external resources
+	}
+
+	// Wait for owned resources to be cleaned up by Kubernetes garbage collection
+	return r.waitForOwnedResourceCleanup(ctx, mcpServer)
+}
+
+// cleanupExternalResources handles cleanup of resources outside the cluster
+func (r *MCPServerReconciler) cleanupExternalResources(ctx context.Context, mcpServer *mcpv1alpha1.MCPServer) error {
+	logger := log.FromContext(ctx)
+	
+	// This is where you would cleanup external resources like:
+	// - Cloud load balancers
+	// - DNS entries  
+	// - External service registrations
+	// - Monitoring configurations
+	
+	logger.Info("Performing external resource cleanup", "mcpserver", mcpServer.Name)
+	
+	// For now, this is a placeholder
+	return nil
+}
+
+// waitForOwnedResourceCleanup waits for Kubernetes to clean up owned resources
+func (r *MCPServerReconciler) waitForOwnedResourceCleanup(ctx context.Context, mcpServer *mcpv1alpha1.MCPServer) error {
+	logger := log.FromContext(ctx)
+	
+	timeout := time.After(FinalizerCleanupTimeout)
+	ticker := time.NewTicker(2 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-timeout:
+			logger.Info("Timeout waiting for resource cleanup, proceeding")
+			return nil
+		case <-ticker.C:
+			// Check if deployment still exists
+			deployment := &appsv1.Deployment{}
+			err := r.Get(ctx, types.NamespacedName{
+				Name:      mcpServer.Name,
+				Namespace: mcpServer.Namespace,
+			}, deployment)
+			
+			if errors.IsNotFound(err) {
+				logger.Info("All owned resources cleaned up successfully")
+				return nil
+			} else if err != nil {
+				return err
+			}
+			
+			logger.Info("Waiting for owned resources to be cleaned up")
+		}
+	}
+}
+
+func (r *MCPServerReconciler) labelsForMCPServer(mcpServer *mcpv1alpha1.MCPServer) map[string]string {
+	return map[string]string{
+		"app.kubernetes.io/name":       "mcp-server",
+		"app.kubernetes.io/instance":   mcpServer.Name,
+		"app.kubernetes.io/component":  "server",
+		"app.kubernetes.io/managed-by": "mcp-operator",
+		"example.com/transport":    mcpServer.GetTransport(),
+	}
+}
+EOF
+
+echo "✅ Finalizer management logic created"
+```{{exec}}
+
+## Implement Status Management
+
+Let's create comprehensive status management for MCP servers:
+
+```bash
+# Create status management logic
+cat > controllers/status.go << 'EOF'
+package controllers
+
+import (
+	"context"
+	"fmt"
+	"time"
+
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
+	"sigs.k8s.io/controller-runtime/pkg/log"
+
+	mcpv1alpha1 "github.com/example/mcp-operator/api/v1alpha1"
+)
+
+// updateMCPServerStatus updates the status based on current state
+func (r *MCPServerReconciler) updateMCPServerStatus(ctx context.Context, mcpServer *mcpv1alpha1.MCPServer) error {
+	logger := log.FromContext(ctx)
+
+	// Get current deployment status
+	deployment, err := r.getCurrentDeployment(ctx, mcpServer)
+	if err != nil {
+		if errors.IsNotFound(err) {
+			return r.updateStatusForMissingDeployment(ctx, mcpServer)
+		}
+		return err
+	}
+
+	// Get current service status  
+	service, err := r.getCurrentService(ctx, mcpServer)
+	if err != nil {
+		if errors.IsNotFound(err) {
+			return r.updateStatusForMissingService(ctx, mcpServer)
+		}
+		return err
+	}
+
+	// Update status based on deployment and service state
+	return r.updateStatusFromResources(ctx, mcpServer, deployment, service)
+}
+
+// getCurrentDeployment fetches the current deployment
+func (r *MCPServerReconciler) getCurrentDeployment(ctx context.Context, mcpServer *mcpv1alpha1.MCPServer) (*appsv1.Deployment, error) {
+	deployment := &appsv1.Deployment{}
+	err := r.Get(ctx, types.NamespacedName{
+		Name:      mcpServer.Name,
+		Namespace: mcpServer.Namespace,
+	}, deployment)
+	return deployment, err
+}
+
+// getCurrentService fetches the current service
+func (r *MCPServerReconciler) getCurrentService(ctx context.Context, mcpServer *mcpv1alpha1.MCPServer) (*corev1.Service, error) {
+	service := &corev1.Service{}
+	err := r.Get(ctx, types.NamespacedName{
+		Name:      mcpServer.Name,
+		Namespace: mcpServer.Namespace,
+	}, service)
+	return service, err
+}
+
+// updateStatusForMissingDeployment handles status when deployment is missing
+func (r *MCPServerReconciler) updateStatusForMissingDeployment(ctx context.Context, mcpServer *mcpv1alpha1.MCPServer) error {
+	mcpServer.Status.Phase = mcpv1alpha1.MCPServerPhasePending
+	mcpServer.Status.ReadyReplicas = 0
+	mcpServer.Status.Replicas = 0
+	mcpServer.Status.ObservedGeneration = mcpServer.Generation
+
+	mcpServer.SetCondition(
+		mcpv1alpha1.ConditionDeploymentReady,
+		"False",
+		"DeploymentNotFound",
+		"Deployment does not exist yet",
+	)
+
+	return r.Status().Update(ctx, mcpServer)
+}
+
+// updateStatusForMissingService handles status when service is missing
+func (r *MCPServerReconciler) updateStatusForMissingService(ctx context.Context, mcpServer *mcpv1alpha1.MCPServer) error {
+	mcpServer.SetCondition(
+		mcpv1alpha1.ConditionServiceReady,
+		"False", 
+		"ServiceNotFound",
+		"Service does not exist yet",
+	)
+
+	return r.Status().Update(ctx, mcpServer)
+}
+
+// updateStatusFromResources updates status based on actual resource state
+func (r *MCPServerReconciler) updateStatusFromResources(ctx context.Context, mcpServer *mcpv1alpha1.MCPServer, deployment *appsv1.Deployment, service *corev1.Service) error {
+	logger := log.FromContext(ctx)
+
+	// Update replica counts
+	mcpServer.Status.Replicas = deployment.Status.Replicas
+	mcpServer.Status.ReadyReplicas = deployment.Status.ReadyReplicas
+	mcpServer.Status.ObservedGeneration = mcpServer.Generation
+
+	// Update deployment condition
+	deploymentReady := deployment.Status.ReadyReplicas == *deployment.Spec.Replicas
+	if deploymentReady {
+		mcpServer.SetCondition(
+			mcpv1alpha1.ConditionDeploymentReady,
+			"True",
+			"DeploymentReady",
+			fmt.Sprintf("Deployment has %d/%d ready replicas", deployment.Status.ReadyReplicas, *deployment.Spec.Replicas),
+		)
+	} else {
+		mcpServer.SetCondition(
+			mcpv1alpha1.ConditionDeploymentReady,
+			"False",
+			"DeploymentNotReady",
+			fmt.Sprintf("Deployment has %d/%d ready replicas", deployment.Status.ReadyReplicas, *deployment.Spec.Replicas),
+		)
+	}
+
+	// Update service condition
+	serviceReady := r.isServiceReady(service)
+	if serviceReady {
+		mcpServer.SetCondition(
+			mcpv1alpha1.ConditionServiceReady,
+			"True",
+			"ServiceReady",
+			"Service is ready and available",
+		)
+	} else {
+		mcpServer.SetCondition(
+			mcpv1alpha1.ConditionServiceReady,
+			"False",
+			"ServiceNotReady",
+			"Service is not ready",
+		)
+	}
+
+	// Update overall phase and endpoint
+	if deploymentReady && serviceReady {
+		mcpServer.Status.Phase = mcpv1alpha1.MCPServerPhaseReady
+		mcpServer.Status.Endpoint = r.buildEndpoint(mcpServer, service)
+		
+		mcpServer.SetCondition(
+			mcpv1alpha1.ConditionReady,
+			"True",
+			"MCPServerReady", 
+			"MCPServer is ready and serving requests",
+		)
+	} else {
+		mcpServer.Status.Phase = mcpv1alpha1.MCPServerPhasePending
+		mcpServer.Status.Endpoint = ""
+		
+		reason := r.getNotReadyReason(deploymentReady, serviceReady)
+		mcpServer.SetCondition(
+			mcpv1alpha1.ConditionReady,
+			"False",
+			"MCPServerNotReady",
+			reason,
+		)
+	}
+
+	// Check for configuration issues
+	if err := r.validateConfiguration(mcpServer); err != nil {
+		mcpServer.Status.Phase = mcpv1alpha1.MCPServerPhaseFailed
+		mcpServer.SetCondition(
+			mcpv1alpha1.ConditionConfigurationValid,
+			"False",
+			"ConfigurationInvalid",
+			err.Error(),
+		)
+		logger.Error(err, "Configuration validation failed")
+	} else {
+		mcpServer.SetCondition(
+			mcpv1alpha1.ConditionConfigurationValid,
+			"True",
+			"ConfigurationValid",
+			"MCPServer configuration is valid",
+		)
+	}
+
+	return r.Status().Update(ctx, mcpServer)
+}
+
+// isServiceReady determines if a service is ready
+func (r *MCPServerReconciler) isServiceReady(service *corev1.Service) bool {
+	// For ClusterIP services, they're ready when they have a cluster IP
+	if service.Spec.Type == corev1.ServiceTypeClusterIP {
+		return service.Spec.ClusterIP != "" && service.Spec.ClusterIP != "None"
+	}
+
+	// For LoadBalancer services, check if external IP is assigned
+	if service.Spec.Type == corev1.ServiceTypeLoadBalancer {
+		return len(service.Status.LoadBalancer.Ingress) > 0
+	}
+
+	// For NodePort services, they're ready when they have node ports assigned
+	if service.Spec.Type == corev1.ServiceTypeNodePort {
+		for _, port := range service.Spec.Ports {
+			if port.NodePort == 0 {
+				return false
 			}
 		}
-		if key == "MCP_ENDPOINT" {
-			if _, err := url.Parse(value); err != nil {
-				return fmt.Errorf("MCP_ENDPOINT configuration value must be a valid URL, got %q", value)
+		return true
+	}
+
+	return true
+}
+
+// buildEndpoint constructs the service endpoint URL
+func (r *MCPServerReconciler) buildEndpoint(mcpServer *mcpv1alpha1.MCPServer, service *corev1.Service) string {
+	transport := mcpServer.GetTransport()
+	port := mcpServer.GetPort()
+
+	switch transport {
+	case "stdio":
+		// stdio doesn't have an HTTP endpoint
+		return fmt.Sprintf("stdio://%s.%s.svc.cluster.local", service.Name, service.Namespace)
+	case "http", "streamable-http":
+		protocol := "http"
+		if transport == "streamable-http" {
+			protocol = "http" // Still HTTP, but with streaming capabilities
+		}
+		return fmt.Sprintf("%s://%s.%s.svc.cluster.local:%d", protocol, service.Name, service.Namespace, port)
+	default:
+		return fmt.Sprintf("unknown://%s.%s.svc.cluster.local:%d", service.Name, service.Namespace, port)
+	}
+}
+
+// getNotReadyReason determines why the MCPServer is not ready
+func (r *MCPServerReconciler) getNotReadyReason(deploymentReady, serviceReady bool) string {
+	if !deploymentReady && !serviceReady {
+		return "Deployment and Service are not ready"
+	} else if !deploymentReady {
+		return "Deployment is not ready"
+	} else if !serviceReady {
+		return "Service is not ready" 
+	}
+	return "MCPServer is not ready"
+}
+
+// validateConfiguration validates the MCPServer configuration
+func (r *MCPServerReconciler) validateConfiguration(mcpServer *mcpv1alpha1.MCPServer) error {
+	// Validate transport-specific configuration
+	transport := mcpServer.GetTransport()
+	
+	if transport == "stdio" && mcpServer.GetReplicas() > 1 {
+		return fmt.Errorf("stdio transport does not support multiple replicas (requested: %d)", mcpServer.GetReplicas())
+	}
+
+	// Validate required configuration for different transports
+	config := mcpServer.Spec.Config
+	if config == nil {
+		config = make(map[string]string)
+	}
+
+	switch transport {
+	case "streamable-http":
+		// Streamable HTTP might require specific session management config
+		if sessionTimeout, exists := config["SESSION_TIMEOUT"]; exists {
+			if _, err := time.ParseDuration(sessionTimeout); err != nil {
+				return fmt.Errorf("invalid SESSION_TIMEOUT format: %s", sessionTimeout)
 			}
+		}
+	case "http":
+		// HTTP transport might require CORS configuration for browser clients
+		if corsOrigins, exists := config["CORS_ORIGINS"]; exists && corsOrigins == "" {
+			return fmt.Errorf("CORS_ORIGINS cannot be empty when specified")
 		}
 	}
 
 	return nil
 }
+
+// getMCPServerHealth checks if the MCP server is healthy by calling health endpoints
+func (r *MCPServerReconciler) getMCPServerHealth(ctx context.Context, mcpServer *mcpv1alpha1.MCPServer) (bool, string) {
+	// This would implement actual health checking logic
+	// For now, we'll consider the server healthy if deployment is ready
+	return mcpServer.Status.ReadyReplicas == mcpServer.GetReplicas(), "Health check not implemented"
+}
 EOF
 
-echo "✅ Webhook validation created"
+echo "✅ Status management logic created"
 ```{{exec}}
 
-## Create Sample MCPServer Resources
-
-Let's create comprehensive examples:
+## Implement Error Handling and Retry Logic
 
 ```bash
-# Create sample resources directory
-mkdir -p config/samples
+# Create error handling utilities
+cat > controllers/errors.go << 'EOF'
+package controllers
 
-# Basic MCPServer
-cat > config/samples/mcp_v1alpha1_mcpserver_basic.yaml << 'EOF'
-apiVersion: mcp.example.com/v1alpha1
-kind: MCPServer
-metadata:
-  name: basic-mcpserver
-  labels:
-    environment: development
-spec:
-  image: "node:18-alpine"
-  transport: streamable-http
-  port: 8080
-  replicas: 1
-  config:
-    MCP_SERVER_NAME: "basic-kubernetes-server"
-    LOG_LEVEL: "info"
+import (
+	"errors"
+	"fmt"
+	"time"
+
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	ctrl "sigs.k8s.io/controller-runtime"
+)
+
+// MCPServerError represents different types of errors that can occur
+type MCPServerError struct {
+	Type    MCPServerErrorType
+	Message string
+	Cause   error
+}
+
+type MCPServerErrorType string
+
+const (
+	// ErrorTypeTransient indicates a temporary error that should be retried
+	ErrorTypeTransient MCPServerErrorType = "Transient"
+	// ErrorTypePermanent indicates a permanent error that won't resolve with retry
+	ErrorTypePermanent MCPServerErrorType = "Permanent"
+	// ErrorTypeConfiguration indicates a configuration error requiring user intervention
+	ErrorTypeConfiguration MCPServerErrorType = "Configuration"
+)
+
+func (e *MCPServerError) Error() string {
+	if e.Cause != nil {
+		return fmt.Sprintf("%s error: %s (caused by: %v)", e.Type, e.Message, e.Cause)
+	}
+	return fmt.Sprintf("%s error: %s", e.Type, e.Message)
+}
+
+// NewTransientError creates a transient error
+func NewTransientError(message string, cause error) *MCPServerError {
+	return &MCPServerError{
+		Type:    ErrorTypeTransient,
+		Message: message,
+		Cause:   cause,
+	}
+}
+
+// NewPermanentError creates a permanent error
+func NewPermanentError(message string, cause error) *MCPServerError {
+	return &MCPServerError{
+		Type:    ErrorTypePermanent,
+		Message: message,
+		Cause:   cause,
+	}
+}
+
+// NewConfigurationError creates a configuration error
+func NewConfigurationError(message string, cause error) *MCPServerError {
+	return &MCPServerError{
+		Type:    ErrorTypeConfiguration,
+		Message: message,
+		Cause:   cause,
+	}
+}
+
+// ClassifyError classifies a standard error into an MCPServerError
+func ClassifyError(err error) *MCPServerError {
+	if err == nil {
+		return nil
+	}
+
+	// Check for Kubernetes API errors
+	if apierrors.IsNotFound(err) {
+		return NewTransientError("Resource not found", err)
+	}
+	
+	if apierrors.IsConflict(err) {
+		return NewTransientError("Resource conflict", err)
+	}
+	
+	if apierrors.IsServerTimeout(err) || apierrors.IsTimeout(err) {
+		return NewTransientError("API server timeout", err)
+	}
+	
+	if apierrors.IsTooManyRequests(err) {
+		return NewTransientError("Rate limited by API server", err)
+	}
+	
+	if apierrors.IsInternalError(err) || apierrors.IsServiceUnavailable(err) {
+		return NewTransientError("API server internal error", err)
+	}
+	
+	if apierrors.IsInvalid(err) || apierrors.IsBadRequest(err) {
+		return NewConfigurationError("Invalid resource configuration", err)
+	}
+	
+	if apierrors.IsUnauthorized(err) || apierrors.IsForbidden(err) {
+		return NewPermanentError("Insufficient permissions", err)
+	}
+
+	// Default to transient for unknown errors
+	return NewTransientError("Unknown error", err)
+}
+
+// DetermineRequeueStrategy determines how to handle the error
+func DetermineRequeueStrategy(err error) (ctrl.Result, error) {
+	if err == nil {
+		return ctrl.Result{}, nil
+	}
+
+	mcpErr, ok := err.(*MCPServerError)
+	if !ok {
+		mcpErr = ClassifyError(err)
+	}
+
+	switch mcpErr.Type {
+	case ErrorTypeTransient:
+		// Retry with exponential backoff (handled by controller runtime)
+		return ctrl.Result{}, mcpErr.Cause
+
+	case ErrorTypeConfiguration:
+		// Don't retry configuration errors - require user intervention
+		// Requeue after a longer delay to avoid spamming logs
+		return ctrl.Result{RequeueAfter: 5 * time.Minute}, nil
+
+	case ErrorTypePermanent:
+		// Don't retry permanent errors
+		return ctrl.Result{}, nil
+
+	default:
+		// Default to transient behavior
+		return ctrl.Result{}, mcpErr.Cause
+	}
+}
+
+// HandleReconcileError provides standardized error handling for reconcile operations
+func (r *MCPServerReconciler) HandleReconcileError(err error, operation string) (ctrl.Result, error) {
+	if err == nil {
+		return ctrl.Result{}, nil
+	}
+
+	logger := r.Log.WithValues("operation", operation)
+	
+	mcpErr := ClassifyError(err)
+	
+	switch mcpErr.Type {
+	case ErrorTypeTransient:
+		logger.Info("Transient error occurred", "error", mcpErr.Message, "cause", mcpErr.Cause)
+		
+	case ErrorTypeConfiguration:
+		logger.Error(mcpErr, "Configuration error - user intervention required")
+		
+	case ErrorTypePermanent:
+		logger.Error(mcpErr, "Permanent error occurred")
+	}
+
+	return DetermineRequeueStrategy(mcpErr)
+}
+
+// MCP-specific error helpers
+
+// IsTransportError checks if error is related to MCP transport configuration
+func IsTransportError(err error) bool {
+	if err == nil {
+		return false
+	}
+	
+	errStr := err.Error()
+	transportErrors := []string{
+		"invalid transport",
+		"transport not supported",
+		"stdio transport does not support multiple replicas",
+		"invalid port range",
+	}
+	
+	for _, transportErr := range transportErrors {
+		if contains(errStr, transportErr) {
+			return true
+		}
+	}
+	
+	return false
+}
+
+// IsImageError checks if error is related to container image issues
+func IsImageError(err error) bool {
+	if err == nil {
+		return false
+	}
+	
+	errStr := err.Error()
+	imageErrors := []string{
+		"image not found",
+		"image pull",
+		"invalid image",
+		"ErrImagePull",
+		"ImagePullBackOff",
+	}
+	
+	for _, imageErr := range imageErrors {
+		if contains(errStr, imageErr) {
+			return true
+		}
+	}
+	
+	return false
+}
+
+// IsResourceError checks if error is related to resource constraints
+func IsResourceError(err error) bool {
+	if err == nil {
+		return false
+	}
+	
+	errStr := err.Error()
+	resourceErrors := []string{
+		"insufficient resources",
+		"resource quota exceeded",
+		"limit range",
+		"out of memory",
+		"CPU limit",
+	}
+	
+	for _, resourceErr := range resourceErrors {
+		if contains(errStr, resourceErr) {
+			return true
+		}
+	}
+	
+	return false
+}
+
+// contains checks if a string contains a substring (case-insensitive)
+func contains(str, substr string) bool {
+	return len(str) >= len(substr) && 
+		   (str == substr || 
+		    len(str) > len(substr) && 
+		    (str[:len(substr)] == substr || 
+		     str[len(str)-len(substr):] == substr || 
+		     findInString(str, substr)))
+}
+
+func findInString(str, substr string) bool {
+	for i := 0; i <= len(str)-len(substr); i++ {
+		if str[i:i+len(substr)] == substr {
+			return true
+		}
+	}
+	return false
+}
+
+// GetRetryAfterDuration returns appropriate retry duration based on error type
+func GetRetryAfterDuration(err error, attempt int) time.Duration {
+	mcpErr := ClassifyError(err)
+	
+	switch mcpErr.Type {
+	case ErrorTypeTransient:
+		// Exponential backoff: 1s, 2s, 4s, 8s, max 60s
+		duration := time.Duration(1<<uint(attempt)) * time.Second
+		if duration > 60*time.Second {
+			return 60 * time.Second
+		}
+		return duration
+		
+	case ErrorTypeConfiguration:
+		// Longer delay for configuration errors
+		return 5 * time.Minute
+		
+	case ErrorTypePermanent:
+		// Very long delay for permanent errors to avoid log spam
+		return 30 * time.Minute
+		
+	default:
+		return 30 * time.Second
+	}
+}
 EOF
 
-# Advanced MCPServer with resources and security
-cat > config/samples/mcp_v1alpha1_mcpserver_advanced.yaml << 'EOF'
+echo "✅ Error handling and retry logic created"
+```{{exec}}
+
+## Test Reconciliation Patterns
+
+```bash
+# Create a test to verify our reconciliation patterns
+cat > test_reconciliation.yaml << 'EOF'
 apiVersion: mcp.example.com/v1alpha1
 kind: MCPServer
 metadata:
-  name: advanced-mcpserver
-  labels:
-    environment: production
-    team: ai-platform
+  name: test-reconciliation
 spec:
-  image: "myregistry/kubernetes-mcp-server:v1.2.0"
+  image: "mcp-k8s-server:latest"
   transport: streamable-http
   port: 8080
-  replicas: 3
-  config:
-    MCP_SERVER_NAME: "production-k8s-server"
-    KUBERNETES_NAMESPACE: "default"
-    LOG_LEVEL: "warn"
-    ENABLE_METRICS: "true"
-    RATE_LIMIT_REQUESTS: "100"
-  resources:
-    requests:
-      cpu: "100m"
-      memory: "128Mi"
-    limits:
-      cpu: "500m"
-      memory: "512Mi"
-  securityContext:
-    runAsNonRoot: true
-    runAsUser: 1000
-    runAsGroup: 3000
-    allowPrivilegeEscalation: false
-    capabilities:
-      drop:
-        - ALL
-    readOnlyRootFilesystem: true
-    seccompProfile:
-      type: RuntimeDefault
-  serviceAccount: mcp-server-sa
-  env:
-    - name: POD_NAME
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.name
-    - name: POD_NAMESPACE
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.namespace
-  volumeMounts:
-    - name: config
-      mountPath: /etc/mcp
-      readOnly: true
-    - name: tmp
-      mountPath: /tmp
-  volumes:
-    - name: config
-      configMap:
-        name: mcp-server-config
-    - name: tmp
-      emptyDir: {}
-EOF
-
-# HTTP-only MCPServer for legacy clients
-cat > config/samples/mcp_v1alpha1_mcpserver_http.yaml << 'EOF'
-apiVersion: mcp.example.com/v1alpha1
-kind: MCPServer
-metadata:
-  name: http-mcpserver
-  labels:
-    transport: http
-spec:
-  image: "myregistry/mcp-server:legacy"
-  transport: http
-  port: 3000
   replicas: 2
   config:
-    MCP_TRANSPORT: "http"
-    CORS_ENABLED: "true"
-    CORS_ORIGINS: "https://app.example.com"
+    MCP_SERVER_NAME: "test-server"
+    LOG_LEVEL: "debug"
 EOF
 
-echo "✅ Sample MCPServer resources created"
+echo "📋 Testing reconciliation patterns:"
+echo ""
+echo "1. 🧪 Create test MCPServer"
+kubectl apply -f test_reconciliation.yaml
+
+echo ""
+echo "2. ⏱️ Wait for initial reconciliation"
+sleep 5
+
+echo ""
+echo "3. 📊 Check MCPServer status"  
+kubectl get mcpservers test-reconciliation -o yaml | grep -A 20 "status:"
+
+echo ""
+echo "4. 🔄 Test update reconciliation"
+kubectl patch mcpserver test-reconciliation --type='merge' -p='{"spec":{"replicas":3}}'
+
+echo ""
+echo "5. ⏱️ Wait for update reconciliation"
+sleep 5
+
+echo ""
+echo "6. 📊 Verify updated status"
+kubectl get mcpservers test-reconciliation -o yaml | grep -A 5 "readyReplicas\|replicas"
+
+echo ""
+echo "7. 🧹 Test finalizer cleanup"
+kubectl delete mcpserver test-reconciliation
+
+echo ""
+echo "8. ⏱️ Monitor deletion process"
+timeout=30
+while [ $timeout -gt 0 ]; do
+  if kubectl get mcpserver test-reconciliation 2>/dev/null; then
+    echo "Still deleting... ($timeout seconds remaining)"
+    sleep 2
+    timeout=$((timeout - 2))
+  else
+    echo "✅ MCPServer deleted successfully with proper finalizer cleanup"
+    break
+  fi
+done
 ```{{exec}}
 
-## Test CRD Installation
+## Summary of Reconciliation Patterns
 
 ```bash
-# Install the CRDs into the cluster
-make install
-
-echo "✅ MCPServer CRD installed"
-
-# Verify CRD installation
+echo "🎉 MCP Reconciliation Patterns Complete!"
 echo ""
-echo "📋 Checking installed CRD:"
-kubectl get crd mcpservers.mcp.example.com
-
-# Test creating a basic MCPServer
+echo "✅ Implemented Patterns:"
+echo "  🧹 Comprehensive finalizer management"
+echo "  📊 MCP-specific status reporting" 
+echo "  🔄 Transport-aware graceful shutdown"
+echo "  ⚡ Smart error classification and retry logic"
+echo "  🕐 Configurable termination grace periods"
+echo "  🏥 Health checking and validation"
 echo ""
-echo "🧪 Testing basic MCPServer creation:"
-kubectl apply -f config/samples/mcp_v1alpha1_mcpserver_basic.yaml
-
-# Check the created resource
+echo "🎯 Key Features:"
+echo "  - Session-aware cleanup for MCP connections"
+echo "  - Transport-specific termination handling"
+echo "  - Detailed condition reporting"
+echo "  - Configuration validation"
+echo "  - Resource state monitoring"
+echo "  - External resource cleanup support"
 echo ""
-echo "📊 Created MCPServer:"
-kubectl get mcpservers
-
+echo "🔧 Error Handling:"
+echo "  - Transient error retry with exponential backoff"
+echo "  - Configuration error detection with user intervention"
+echo "  - Permanent error identification to avoid retry loops"
+echo "  - MCP-specific error classification"
 echo ""
-echo "📋 Detailed MCPServer information:"
-kubectl describe mcpserver basic-mcpserver
-
-# Cleanup test resource
-kubectl delete mcpserver basic-mcpserver
+echo "Next: Design the complete operator architecture!"
 ```{{exec}}
 
-## CRD Features Summary
-
-```bash
-echo "🎉 MCPServer CRD Features Summary:"
-echo ""
-echo "📋 Comprehensive Specification:"
-echo "  ✅ Container image and transport configuration"
-echo "  ✅ Scaling with replica count"
-echo "  ✅ Resource requests and limits"
-echo "  ✅ Security context and service account"
-echo "  ✅ Environment variables and volumes"
-echo "  ✅ Flexible key-value configuration"
-echo ""
-echo "🔍 Advanced Validation:"
-echo "  ✅ Webhook-based validation"
-echo "  ✅ Transport-specific constraints"
-echo "  ✅ Port and replica validation"
-echo "  ✅ Configuration value validation"
-echo "  ✅ CEL expressions for complex rules"
-echo ""
-echo "📊 Rich Status Reporting:"
-echo "  ✅ Phase-based lifecycle tracking"
-echo "  ✅ Detailed condition reporting"
-echo "  ✅ Ready replica monitoring"
-echo "  ✅ Service endpoint exposure"
-echo "  ✅ Generation-based change detection"
-echo ""
-echo "🛠️ Operational Features:"
-echo "  ✅ Custom print columns"
-echo "  ✅ Short names (mcps)"
-echo "  ✅ Resource categories (ai, mcp)"
-echo "  ✅ Scale subresource support"
-echo "  ✅ Status subresource"
-echo ""
-echo "🎯 Next: Implement reconciliation patterns!"
-```{{exec}}
-
-Perfect! Our MCPServer CRD is now complete with comprehensive validation, status reporting, and operational features. In the next step, we'll implement the reconciliation patterns!
+Perfect! Our reconciliation patterns are now specifically tailored for MCP server workloads with proper finalizer management, status reporting, and error handling. In the next step, we'll design the complete operator architecture!

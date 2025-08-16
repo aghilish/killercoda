@@ -36,14 +36,6 @@ wait $HTTP_PID 2>/dev/null
 
 ## Test with MCP Inspector
 
-Let's test our servers using the MCP Inspector tool:
-
-```bash
-npm run test:inspector-http
-```{{exec}}
-
-[MCP INSPECTOR UI]({{TRAFFIC_HOST1_6274}})
-
 ```bash
 echo "=== Testing with MCP Inspector ==="
 

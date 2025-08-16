@@ -1,6 +1,6 @@
 # MCP Server Kubernetes Operator Tutorial
 
-A comprehensive tutorial that teaches you to build a production-ready Kubernetes operator for managing Model Context Protocol (MCP) servers. This tutorial bridges AI tooling with cloud-native infrastructure through 12 hands-on steps.
+A comprehensive tutorial that teaches you to build a production-ready Kubernetes operator for managing Model Context Protocol (MCP) servers. This tutorial bridges AI tooling with cloud-native infrastructure through 11 hands-on steps.
 
 ## 🎯 What You'll Learn
 
@@ -12,13 +12,11 @@ This tutorial covers three essential areas:
 - Connecting MCP servers to AI applications like Claude Desktop
 - Understanding resources, tools, and prompts
 
-### Part 2: Kubernetes Reconciliation (Steps 6-8)
-- Controller patterns and reconciliation loops
-- Custom Resource Definitions (CRDs)
-- Level-based reconciliation and control theory
-- Error handling and retry strategies
+### Part 2: Kubernetes Reconciliation (Steps 6-7)
+- Custom Resource Definitions (CRDs) and kubebuilder setup
+- Reconciliation patterns for MCP workloads
 
-### Part 3: MCP Server Operator (Steps 9-12)
+### Part 3: MCP Server Operator (Steps 8-11)
 - Complete Kubernetes operator implementation
 - Production-ready deployment management
 - Security, monitoring, and scaling considerations
@@ -924,7 +922,7 @@ For integrating with Claude Desktop, update your `~/.claude-desktop-config.json`
 mkdir -p workspace/mcp-operator
 cd workspace/mcp-operator
 
-kubebuilder init --domain mcp.example.com --repo github.com/example/mcp-operator
+kubebuilder init --domain example.com --repo example.com
 kubebuilder create api --group mcp --version v1alpha1 --kind MCPServer --controller --resource
 ```
 
@@ -1054,7 +1052,7 @@ const (
 
 // Finalizer for MCPServer cleanup
 const (
-	MCPServerFinalizer = "mcp.example.com/finalizer"
+	MCPServerFinalizer = "example.com/finalizer"
 )
 
 //+kubebuilder:object:root=true
@@ -1249,9 +1247,9 @@ type MCPServerReconciler struct {
 	Scheme *runtime.Scheme
 }
 
-//+kubebuilder:rbac:groups=mcp.mcp.example.com,resources=mcpservers,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=mcp.mcp.example.com,resources=mcpservers/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=mcp.mcp.example.com,resources=mcpservers/finalizers,verbs=update
+//+kubebuilder:rbac:groups=mcp.example.com,resources=mcpservers,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=mcp.example.com,resources=mcpservers/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=mcp.example.com,resources=mcpservers/finalizers,verbs=update
 //+kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups="",resources=services,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups="",resources=configmaps,verbs=get;list;watch;create;update;patch;delete
@@ -1490,7 +1488,7 @@ func (r *MCPServerReconciler) labelsForMCPServer(mcpServer *mcpv1alpha1.MCPServe
 		"app.kubernetes.io/instance":   mcpServer.Name,
 		"app.kubernetes.io/component":  "server",
 		"app.kubernetes.io/managed-by": "mcp-operator",
-		"mcp.example.com/transport":    mcpServer.GetTransport(),
+		"example.com/transport":    mcpServer.GetTransport(),
 	}
 }
 
@@ -1753,7 +1751,7 @@ func (r *MCPServerReconciler) labelsForMCPServer(mcpServer *mcpv1alpha1.MCPServe
 		"app.kubernetes.io/instance":   mcpServer.Name,
 		"app.kubernetes.io/component":  "server",
 		"app.kubernetes.io/managed-by": "mcp-operator",
-		"mcp.example.com/transport":    mcpServer.GetTransport(),
+		"example.com/transport":    mcpServer.GetTransport(),
 	}
 }
 ```
@@ -1763,7 +1761,7 @@ func (r *MCPServerReconciler) labelsForMCPServer(mcpServer *mcpv1alpha1.MCPServe
 #### Basic MCPServer
 ```bash
 cat << 'EOF' > workspace/basic-mcpserver.yaml
-apiVersion: servers.mcp.example.com/v1alpha1
+apiVersion: mcp.example.com/v1alpha1
 kind: MCPServer
 metadata:
   name: basic-mcpserver
@@ -1793,7 +1791,7 @@ EOF
 #### Advanced Production MCPServer
 ```bash
 cat << 'EOF' > workspace/advanced-mcpserver.yaml
-apiVersion: servers.mcp.example.com/v1alpha1
+apiVersion: mcp.example.com/v1alpha1
 kind: MCPServer
 metadata:
   name: advanced-mcpserver
@@ -1952,9 +1950,9 @@ docker images | grep mcp-k8s-server
 ```bash
 # Initialize and build the operator
 cd workspace
-kubebuilder init --domain mcp.example.com --repo github.com/example/mcp-operator --project-name mcp-operator
+kubebuilder init --domain example.com --repo example.com --project-name mcp-operator
 cd mcp-operator
-kubebuilder create api --group servers --version v1alpha1 --kind MCPServer --controller --resource
+kubebuilder create api --group mcp --version v1alpha1 --kind MCPServer --controller --resource
 
 # Update dependencies and generate manifests
 go mod tidy
@@ -1971,7 +1969,7 @@ make run &
 
 # Deploy sample MCPServer with your built image
 cat << 'EOF' > ../basic-mcpserver.yaml
-apiVersion: servers.mcp.example.com/v1alpha1
+apiVersion: mcp.example.com/v1alpha1
 kind: MCPServer
 metadata:
   name: basic-mcpserver
@@ -2026,7 +2024,7 @@ make deploy IMG=your-registry/mcp-operator:latest
 
 # Create production MCPServer
 cat << 'EOF' > ../production-mcpserver.yaml
-apiVersion: servers.mcp.example.com/v1alpha1
+apiVersion: mcp.example.com/v1alpha1
 kind: MCPServer
 metadata:
   name: production-mcpserver
@@ -2215,7 +2213,7 @@ make generate && make manifests
 
 # CRD issues - clean slate approach
 make uninstall && make install
-kubectl get crd mcpservers.servers.mcp.example.com
+kubectl get crd mcpservers.mcp.example.com
 
 # Controller debugging
 kubectl get mcpservers

@@ -7,51 +7,47 @@
     },
     "steps": [
       {
-        "title": "Introduction to Model Context Protocol (MCP) - 1 / 12",
+        "title": "Introduction to Model Context Protocol (MCP) - 1 / 11",
         "text": "step1/text.md"
       },
       {
-        "title": "MCP Building Blocks: Servers, Clients, and Components - 2 / 12",
+        "title": "MCP Building Blocks: Servers, Clients, and Components - 2 / 11",
         "text": "step2/text.md"
       },
       {
-        "title": "Setting up MCP Development Environment - 3 / 12",
+        "title": "Setting up MCP Development Environment - 3 / 11",
         "text": "step3/text.md"
       },
       {
-        "title": "Building Your First MCP Server - 4 / 12",
+        "title": "Building Your First MCP Server - 4 / 11",
         "text": "step4/text.md"
       },
       {
-        "title": "LLM Integration and Testing - 5 / 12",
+        "title": "LLM Integration and Testing - 5 / 11",
         "text": "step5/text.md"
       },
       {
-        "title": "Kubernetes Controllers and Reconciliation Fundamentals - 6 / 12",
-        "text": "step6/text.md"
-      },
-      {
-        "title": "Defining the MCPServer Custom Resource - 7 / 12",
+        "title": "Defining the MCPServer Custom Resource - 6 / 11",
         "text": "step7/text.md"
       },
       {
-        "title": "Reconciliation Patterns for MCP Workloads - 8 / 12",
+        "title": "Reconciliation Patterns for MCP Workloads - 7 / 11",
         "text": "step8/text.md"
       },
       {
-        "title": "Operator Architecture Design - 9 / 12",
+        "title": "Operator Architecture Design - 8 / 11",
         "text": "step9/text.md"
       },
       {
-        "title": "Implementing the MCPServer Controller - 10 / 12",
+        "title": "Implementing the MCPServer Controller - 9 / 11",
         "text": "step10/text.md"
       },
       {
-        "title": "Production Deployment and Service Management - 11 / 12",
+        "title": "Production Deployment and Service Management - 10 / 11",
         "text": "step11/text.md"
       },
       {
-        "title": "Testing and Production Considerations - 12 / 12",
+        "title": "Testing and Production Considerations - 11 / 11",
         "text": "step12/text.md"
       }
     ],
