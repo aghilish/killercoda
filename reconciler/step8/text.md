@@ -6,13 +6,22 @@ Now let's design the complete architecture for our MCPServer operator. We'll def
 <br/>
 <img src="../assets/mcp-architecture.png" alt="mcp-architecture">
 
+<br/>
+<br/>
+
 ## Component Interaction Model
 <br/>
 <img src="../assets/mcp-interaction-model.png" alt="mcp-interaction-model">
 
+<br/>
+<br/>
+
 ## Operator Control Loop
 <br/>
 <img src="../assets/mcp-controller-loop.png" alt="mcp-control-loop">
+
+<br/>
+<br/>
 
 Let's implement key operator design patterns:
 
