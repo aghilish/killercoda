@@ -1,0 +1,72 @@
+sequenceDiagram
+    participant AI as AI Application<br/>(Claude/ChatGPT)
+    participant Client as MCP Client
+    participant Service as Kubernetes Service
+    participant Pod as MCP Server Pod
+    participant API as Kubernetes API Server
+    participant Controller as MCP Controller
+    participant CRD as MCPServer Resource
+    
+    Note over AI,CRD: MCP Server Deployment & Interaction Flow
+    
+    %% Initial Setup
+    Controller->>API: Watch MCPServer resources
+    Controller->>CRD: Create/Update MCPServer CR
+    Controller->>API: Create Deployment
+    Controller->>API: Create Service
+    API->>Pod: Deploy MCP Server Pod
+    
+    Note over Controller,Pod: Deployment Phase Complete
+    
+    %% Runtime Interaction
+    AI->>Client: Initialize MCP connection
+    Client->>Service: HTTP/SSE request to /mcp
+    Service->>Pod: Route request to healthy pod
+    
+    %% MCP Protocol Flow
+    Client->>Pod: initialize request
+    Pod->>Client: initialize response (capabilities)
+    
+    Client->>Pod: list_resources request
+    Pod->>API: Query Kubernetes resources
+    API->>Pod: Return resource data
+    Pod->>Client: resources response
+    
+    Client->>Pod: call_tool request (e.g., get-pods)
+    Pod->>API: kubectl get pods
+    API->>Pod: Pod list
+    Pod->>Client: tool response with pod data
+    
+    AI->>Client: Request MCP prompt
+    Client->>Pod: get_prompt request
+    Pod->>Client: prompt template response
+    
+    %% Status Updates
+    Pod->>API: Update pod status
+    API->>Controller: Status change event
+    Controller->>CRD: Update MCPServer status
+    
+    %% Error Handling
+    alt Pod becomes unhealthy
+        Service->>Service: Remove pod from endpoints
+        Controller->>API: Detect pod failure
+        Controller->>API: Restart/recreate pod
+        API->>Pod: New pod deployment
+        Pod->>Service: Register with service
+    end
+    
+    %% Connection Management
+    alt Connection lost
+        Client->>Service: Reconnect attempt
+        Service->>Pod: Route to available pod
+        Pod->>Client: Re-establish connection
+    end
+    
+    %% Scaling
+    alt High load detected
+        Controller->>API: Scale deployment
+        API->>Pod: Deploy additional pods
+        Service->>Pod: Add new endpoints
+    end
+    
+    Note over AI,CRD: Continuous Operation & Monitoring

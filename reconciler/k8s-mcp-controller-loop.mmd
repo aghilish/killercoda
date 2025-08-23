@@ -1,0 +1,45 @@
+flowchart TD
+    Start([MCP Operator Start]) --> Watch[Watch API Server<br/>for MCPServer Resources]
+    Watch --> Event[MCPServer Event<br/>Create/Update/Delete]
+    Event --> Queue[Add to Work Queue]
+    Queue --> Process[Process MCPServer]
+    
+    Process --> GetCurrent[Get Current State<br/>Pod, Service, ConfigMap]
+    GetCurrent --> GetDesired[Get Desired State<br/>from MCPServer.Spec]
+    
+    GetDesired --> Compare{Current = Desired?}
+    Compare -->|Yes| UpdateStatus[Update MCPServer.Status<br/>Ready/NotReady] --> Queue
+    Compare -->|No| Reconcile[Reconcile MCP Resources]
+    
+    Reconcile --> Actions[Create/Update MCP Resources<br/>• Pod with MCP Server<br/>• Service for HTTP/stdio<br/>• ConfigMap for tools/prompts<br/>• Secret for credentials]
+    Actions --> HealthCheck[Check MCP Server<br/>Health & Readiness]
+    HealthCheck --> Check{MCP Server<br/>Ready?}
+    
+    Check -->|Yes| UpdateStatus
+    Check -->|No| RequeueError[Requeue with<br/>Exponential Backoff]
+    RequeueError --> Queue
+    
+    %% Error handling
+    GetCurrent -.->|API Error| RequeueError
+    Actions -.->|Resource Error| RequeueError
+    HealthCheck -.->|MCP Server Down| RequeueError
+    
+    %% Finalizer handling for MCP cleanup
+    Process --> HasFinalizer{Has mcp.example.com/finalizer<br/>& Being Deleted?}
+    HasFinalizer -->|Yes| MCPCleanup[Cleanup MCP Resources<br/>• Graceful server shutdown<br/>• Remove external resources<br/>• Clean up connections] --> RemoveFinalizer[Remove MCP Finalizer]
+    HasFinalizer -->|No| GetCurrent
+    RemoveFinalizer --> Queue
+    
+    %% Styling
+    classDef start fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    classDef watch fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef process fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    classDef decision fill:#fff8e1,stroke:#f57c00,stroke-width:2px
+    classDef action fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef error fill:#ffebee,stroke:#d32f2f,stroke-width:2px
+    
+    class Start start
+    class Watch,Event,Queue watch
+    class Process,GetCurrent,GetDesired,Reconcile,Actions,HealthCheck,UpdateStatus,MCPCleanup,RemoveFinalizer process
+    class Compare,Check,HasFinalizer decision
+    class RequeueError error

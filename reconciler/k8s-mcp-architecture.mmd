@@ -1,0 +1,90 @@
+graph TB
+    subgraph "AI Application Layer"
+        Claude[Claude Desktop]
+        ChatGPT[ChatGPT]
+        VSCode[VS Code Extension]
+    end
+    
+    subgraph "MCP Client Layer"
+        MCPClient[MCP Client<br/>JSON-RPC 2.0]
+    end
+    
+    subgraph "Kubernetes Cluster"
+        subgraph "MCP Operator"
+            Controller[MCP Controller]
+            CRD[MCPServer CRD]
+        end
+        
+        subgraph "Kubernetes Resources"
+            Deployment[Deployment]
+            Service[Service]
+            ConfigMap[ConfigMap]
+            Secret[Secret]
+        end
+        
+        subgraph "MCP Server Pods"
+            Pod1[MCP Server Pod 1]
+            Pod2[MCP Server Pod 2]
+            Pod3[MCP Server Pod N]
+        end
+        
+        subgraph "Kubernetes API"
+            APIServer[kube-apiserver]
+        end
+    end
+    
+    subgraph "External Systems"
+        Database[(Database)]
+        FileSystem[File System]
+        APIs[External APIs]
+    end
+    
+    %% AI Application to MCP Client connections
+    Claude --> MCPClient
+    ChatGPT --> MCPClient
+    VSCode --> MCPClient
+    
+    %% MCP Client to Services
+    MCPClient -.->|HTTP/SSE| Service
+    
+    %% Controller relationships
+    Controller --> CRD
+    Controller --> Deployment
+    Controller --> Service
+    Controller --> ConfigMap
+    Controller --> Secret
+    Controller -.->|watches| APIServer
+    
+    %% Deployment to Pods
+    Deployment --> Pod1
+    Deployment --> Pod2
+    Deployment --> Pod3
+    
+    %% Service to Pods
+    Service --> Pod1
+    Service --> Pod2
+    Service --> Pod3
+    
+    %% MCP Server connections to external systems
+    Pod1 -.->|K8s API| APIServer
+    Pod2 -.->|K8s API| APIServer
+    Pod3 -.->|K8s API| APIServer
+    
+    Pod1 --> Database
+    Pod1 --> FileSystem
+    Pod1 --> APIs
+    
+    %% Styling
+    classDef aiApp fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    classDef mcpClient fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef operator fill:#f1f8e9,stroke:#388e3c,stroke-width:2px
+    classDef k8sResource fill:#fff8e1,stroke:#f57c00,stroke-width:2px
+    classDef mcpPod fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef external fill:#f5f5f5,stroke:#616161,stroke-width:2px
+    
+    class Claude,ChatGPT,VSCode aiApp
+    class MCPClient mcpClient
+    class Controller,CRD operator
+    class Deployment,Service,ConfigMap,Secret,APIServer k8sResource
+    class Pod1,Pod2,Pod3 mcpPod
+    class Database,FileSystem,APIs external
