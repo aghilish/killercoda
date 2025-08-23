@@ -3,7 +3,9 @@
   "description": "A Complete Guide to Model Context Protocol (MCP) and Building Kubernetes Operators for MCP Server Management",
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "init/background.sh",
+      "foreground": "init/foreground.sh"
     },
     "steps": [
       {
