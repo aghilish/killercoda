@@ -4,13 +4,10 @@ In this comprehensive lab, you'll learn to build a production-ready Kubernetes o
 
 **Part 1: MCP Fundamentals** - Understanding the Model Context Protocol, its architecture, and building MCP servers that connect AI applications to data sources and tools.
 
-**Part 2: Kubernetes Reconciliation** - Deep-diving into Kubernetes controller patterns, reconciliation loops, and implementing robust operators.
-
-**Part 3: MCP Server Operator** - Bringing it all together by building a Kubernetes operator that manages MCP server deployments, making them enterprise-ready.
+**Part 2: MCP Server Operator** - Bringing it all together by building a Kubernetes operator that manages MCP server deployments, making them enterprise-ready.
 
 By the end, you'll have:
 - Built and deployed MCP servers that integrate with LLMs
-- Mastered Kubernetes controller reconciliation patterns
 - Created a complete operator for managing MCP server lifecycles
 - Understood production considerations for AI infrastructure
 
